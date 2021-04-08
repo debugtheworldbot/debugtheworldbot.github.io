@@ -1,0 +1,10 @@
+base_info:
+  title: Tian
+  author: TTT
+  url: https://github.com/debugtheworldbot?tab=repositories
+style:
+  primary_color: "#0066CC"
+  first_screen: 
+    enable: true
+    description: 30% made by code
+
