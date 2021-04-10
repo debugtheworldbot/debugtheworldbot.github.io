@@ -4,7 +4,13 @@ base_info:
   url: https://github.com/debugtheworldbot?tab=repositories
 style:
   primary_color: "#0066CC"
-  first_screen: 
+  avatar: https://www.linkpicture.com/q/thumb-219022.jpg
+  favicon: https://www.linkpicture.com/q/thumb-219022.jpg
+  first_screen:
     enable: true
-    description: 30% made by code
-
+    description: 30% of myself made by code
+social_contact:
+  enable: true
+  links:
+    github: https://github.com/debugtheworldbot
+    twitter: https://twitter.com/_antivini_
