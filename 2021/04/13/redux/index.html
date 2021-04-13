@@ -9,7 +9,7 @@
     
     <title>
         
-            进击的巨人 |
+            通过context实现redux |
         
         Tian
     </title>
@@ -117,7 +117,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">进击的巨人</span>
+            <span class="title-hover-animation">通过context实现redux</span>
         </div>
 
         
@@ -135,9 +135,20 @@
                     <div class="meta-info">
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
-        <i class="fas fa-edit"></i>&nbsp;2021-04-10 19:05:00
+        <i class="fas fa-edit"></i>&nbsp;2021-04-13 14:59:58
     </span>
     
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/react/">react</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
     
 
     
@@ -152,11 +163,8 @@
         
 
         <div class="article-content markdown-body">
-            <p>初识巨人和很多人一样，都是来源于 2011 年的热潮，因为当时在上高中，所以第一部甚至都没有完整的看完，主要是对二次元也没有很大的兴趣。<br><code>红莲の弓矢</code>几乎是我当时对这部作品的所有印象：一个有点意思的，画风有点奇怪的<del>美食番</del>作品。</p>
-<p>真正让我对它感兴趣的还是第二季动画的结尾，<br>从一个杀怪的故事变成了杀人的故事。<br>强烈的好奇心驱使我几天之内就看完了所有的漫画，期间的震撼感甚至可以说是前所未有的。<br>没别的原因，就是觉得好看精彩，整个故事几乎每能个能说的上话的人都能感觉到他们是比较真实的，<br>每个人的目标，理想都不完全相同，有挣扎，也有自己的小心思<br>。各种暗线伏笔也是恰到好处。 <em>白夜</em> 就是整部作品的最高光。</p>
-<p>那时候我认为巨人是不可能烂尾的作品，因为在谏山创构建的无比精细的世界中，<br>随意选择一种方向来结局都不可能会被称为’烂‘,<br>然而我还是太天真了，<br>从艾伦的接头行动成功发起地鸣的那一刻，我就感觉可能会有问题。在这之后的漫画似乎一直在挖坑，<del>这一般就是烂尾的前兆</del><br>一个坑没有解决，反而又挖了两个新坑…总之就是越来越无语。</p>
-<p>到最后终于爆炸了，我甚至都不太意外。</p>
-<p>进击的巨人可以和 the last of us 2 竞争一下了。</p>
+            <p>先看页面：<br><img src="/images/redux-1.png" alt="hh"><br>目前的实现非常简单，直接看代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; App.jsx</span><br><span class="line"></span><br><span class="line">export const App &#x3D; () &#x3D;&gt; &#123;</span><br><span class="line">  console.log(&#39;app&#39;);</span><br><span class="line">  return (</span><br><span class="line">    &lt;appContext.Provider value&#x3D;&#123;store&#125;&gt; &#x2F;&#x2F;store里面存的就是全局的数据 </span><br><span class="line">      &lt;Grandfather &#x2F;&gt; &#x2F;&#x2F; 只是单纯的展示store里面的数据</span><br><span class="line">      &lt;Father &#x2F;&gt; &#x2F;&#x2F; 可以修改store数据</span><br><span class="line">      &lt;Son &#x2F;&gt; &#x2F;&#x2F; 完全静态的组件</span><br><span class="line">    &lt;&#x2F;appContext.Provider&gt;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const Grandfather &#x3D; () &#x3D;&gt; &#123;</span><br><span class="line">  console.log(&#39;grandfather&#39;)</span><br><span class="line">  return (&lt;section&gt;Grandfather&lt;User &#x2F;&gt;&lt;&#x2F;section&gt;)</span><br><span class="line">&#125;</span><br><span class="line">const User &#x3D; connect((&#123;state&#125;) &#x3D;&gt; &#123;</span><br><span class="line">  console.log(&#39;user&#39;)</span><br><span class="line">  return &lt;div&gt;User:&#123;state.user.name&#125;&lt;&#x2F;div&gt;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">const Father &#x3D; () &#x3D;&gt; &#123;</span><br><span class="line">  console.log(&#39;father&#39;)</span><br><span class="line">  return (&lt;section&gt;father &lt;UserModifier &#x2F;&gt;&lt;&#x2F;section&gt;)</span><br><span class="line">&#125;</span><br><span class="line">const Son &#x3D; () &#x3D;&gt; &#123;</span><br><span class="line">  console.log(&#39;son&#39;)</span><br><span class="line">  return (&lt;section&gt;son&lt;&#x2F;section&gt;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const _UserModifier &#x3D; (&#123;dispach,state&#125;) &#x3D;&gt; &#123;</span><br><span class="line">  console.log(&#39;usermocidifer&#39;);</span><br><span class="line">  const onChange &#x3D; (e) &#x3D;&gt; &#123;</span><br><span class="line">    dispach(&#123;type:&#39;updateUser&#39;,payload:&#123;name:e.target.value&#125;&#125;)</span><br><span class="line">  &#125;</span><br><span class="line">  return &lt;div&gt;</span><br><span class="line">    &lt;input value&#x3D;&#123;state.user.name&#125;</span><br><span class="line">      onChange&#x3D;&#123;onChange&#125;&#x2F;&gt;</span><br><span class="line">  &lt;&#x2F;div&gt;</span><br><span class="line">&#125;</span><br><span class="line">const UserModifier &#x3D; connect(_UserModifier)</span><br></pre></td></tr></table></figure>
 
         </div>
 
@@ -165,21 +173,21 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2021/04/12/codetest/"
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2021/04/13/hello-world/"
                         >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">codetest</span>
-                                <span class="post-nav-item">Prev posts</span>
+                                <span class="post-nav-title-item">hexo init</span>
+                                <span class="post-nav-item">Next posts</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
                             </span>
                         </a>
                     </div>
-                
                 
             </div>
         
