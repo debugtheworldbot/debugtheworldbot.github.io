@@ -9,6 +9,9 @@ style:
   first_screen:
     enable: true
     description: 30% of myself made by code
+  scroll:
+    progress_bar: 
+      enable: true
 social_contact:
   enable: true
   links:
@@ -16,3 +19,30 @@ social_contact:
     twitter: https://twitter.com/_antivini_
 code_copy:
   enable: true
+home_article:
+  category:
+    enable: true
+    limit: 3    
+  tag:
+    enable: true
+    limit: 5  
+post:
+  word_count:
+    enable: true
+    wordcount: true
+    min2read: true
+  author_label:
+    enable: true
+    auto: false
+    custom_label_list: ['codezera']
+toc:
+  enable: true
+  number: true
+  expand_all: true
+  init_open: true
+website_count:
+  busuanzi_count:
+    enable: true
+    site_uv: true
+    site_pv: true
+    page_pv: true

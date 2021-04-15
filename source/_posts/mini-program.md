@@ -1,11 +1,8 @@
 ---
-title: mini-program
+title: 小程序踩坑记录
 date: 2021-04-15 14:40:19
 tags:
 ---
-# 小程序踩坑记录
-
-## 小程序
 
 ### html
 
@@ -57,7 +54,7 @@ https://github.com/NervJS/taro/issues/6084
 
 
 
-### jsx的map问题 。。。
+### jsx的map问题
 
 ```jsx
 {[['a']].map(b=>
