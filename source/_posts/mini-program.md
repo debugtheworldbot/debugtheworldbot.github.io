@@ -8,7 +8,7 @@ tags:
 
 类似于隐私协议的应用html文件（dangerouslySetInnerHTML），无法通过标签名来修改样式，但是可以通过正则给所有的标签加上class
 
-```react
+```tsx
 export function addRichTextClass(text:string){
   // 去掉标签里面的style和class，加上统一的class，例如p_class
   const rmStyle =(tag:string):[RegExp,string] =>
