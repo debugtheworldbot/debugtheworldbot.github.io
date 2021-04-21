@@ -10,7 +10,7 @@ tags: react
 
 目前的实现非常简单，直接看代码：
 
-```tsx
+```jsx
 // App.jsx
 import React from 'react'
 import {connect,appContext,store} from './redux'
@@ -65,7 +65,7 @@ const UserModifier = connect(_UserModifier)
 
 `reducer`没啥好说的，就是更新`store.state`里面的数据
 
-```tsx
+```jsx
 // reudx.jsx
 
 import React ,{useState,useContext , useEffect} from 'react'
