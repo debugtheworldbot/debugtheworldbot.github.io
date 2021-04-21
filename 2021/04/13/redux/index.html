@@ -156,7 +156,7 @@
     
     
         <span class="article-wordcount article-meta-item">
-            <i class="fas fa-file-word"></i>&nbsp;<span>647 Words</span>
+            <i class="fas fa-file-word"></i>&nbsp;<span>649 Words</span>
         </span>
     
     
@@ -177,7 +177,7 @@
         
 
         <div class="article-content markdown-body">
-            <p>先看页面：</p>
+            <h2 id="first-version"><a href="#first-version" class="headerlink" title="first version"></a>first version</h2><p>先看页面：</p>
 <p><img src="/images/redux-1.png" alt="1"></p>
 <p>目前的实现非常简单，直接看代码：</p>
 <figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// App.jsx</span></span><br><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123;connect,appContext,store&#125; <span class="keyword">from</span> <span class="string">&#x27;./redux&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> App = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;app&#x27;</span>);</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    &lt;appContext.Provider value=&#123;store&#125;&gt; <span class="comment">//store里面存的就是全局的数据</span></span><br><span class="line">      &lt;Grandfather /&gt; <span class="comment">// 只是单纯的展示store里面的数据</span></span><br><span class="line">      &lt;Father /&gt; <span class="comment">// 可以修改store中的数据</span></span><br><span class="line">      &lt;Son /&gt; <span class="comment">// 完全静态的组件</span></span><br><span class="line">    &lt;/appContext.Provider&gt;</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> Grandfather = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;grandfather&#x27;</span>)</span><br><span class="line">  <span class="keyword">return</span> (<span class="xml"><span class="tag">&lt;<span class="name">section</span>&gt;</span>Grandfather<span class="tag">&lt;<span class="name">User</span> /&gt;</span><span class="tag">&lt;/<span class="name">section</span>&gt;</span></span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> User = connect(<span class="function">(<span class="params">&#123;state&#125;</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;user&#x27;</span>)</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>User:&#123;state.user.name&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> Father = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;father&#x27;</span>)</span><br><span class="line">  <span class="keyword">return</span> (<span class="xml"><span class="tag">&lt;<span class="name">section</span>&gt;</span>father <span class="tag">&lt;<span class="name">UserModifier</span> /&gt;</span><span class="tag">&lt;/<span class="name">section</span>&gt;</span></span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> Son = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;son&#x27;</span>)</span><br><span class="line">  <span class="keyword">return</span> (<span class="xml"><span class="tag">&lt;<span class="name">section</span>&gt;</span>son<span class="tag">&lt;/<span class="name">section</span>&gt;</span></span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> _UserModifier = <span class="function">(<span class="params">&#123;dispach,state&#125;</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;usermocidifer&#x27;</span>);</span><br><span class="line">  <span class="keyword">const</span> onChange = <span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">    dispach(&#123;<span class="attr">type</span>:<span class="string">&#x27;updateUser&#x27;</span>,<span class="attr">payload</span>:&#123;<span class="attr">name</span>:e.target.value&#125;&#125;)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> &lt;div&gt;</span><br><span class="line">    &lt;input value=&#123;state.user.name&#125;</span><br><span class="line">      onChange=&#123;onChange&#125;/&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> UserModifier = connect(_UserModifier)</span><br></pre></td></tr></table></figure>
@@ -230,6 +230,85 @@
             </div>
         
 
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;Comments</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="//cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'Fj6gQz9zqpSIny6yIBPgQhj4-gzGzoHsz',
+                    appKey: 'BlmmvmISSVV7c3ci6xngKuvg',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '😜 尽情吐槽吧~',
+                    lang: 'en'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'TTT';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
         
     </div>
 </div>
@@ -288,6 +367,10 @@
 
         <!-- go comment -->
         
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
     </ul>
 </div>
 
@@ -341,7 +424,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#first-version"><span class="nav-number">1.</span> <span class="nav-text">first version</span></a></li></ol>
     </div>
 </div>
         </aside>
