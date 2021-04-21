@@ -46,3 +46,15 @@ website_count:
     site_uv: true
     site_pv: true
     page_pv: true
+comment:
+  enable: true
+  use: valine  # values: valine | gitalk | twikoo
+
+  # Valine
+  # See: https://github.com/xCss/Valine
+  valine:
+    appid: Fj6gQz9zqpSIny6yIBPgQhj4-gzGzoHsz                
+    appkey: BlmmvmISSVV7c3ci6xngKuvg
+    placeholder: 😜 尽情吐槽吧~
+  pjax:
+    enable: true

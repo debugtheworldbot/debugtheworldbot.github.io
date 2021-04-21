@@ -2,7 +2,9 @@
 title: 通过context实现redux
 date: 2021-04-13 14:59:58
 tags: react
+sticky: 1
 ---
+## first version
 
 先看页面：
 

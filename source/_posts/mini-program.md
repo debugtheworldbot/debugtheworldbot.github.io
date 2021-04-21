@@ -8,7 +8,7 @@ tags:
 
 类似于隐私协议的应用html文件（dangerouslySetInnerHTML），无法通过标签名来修改样式，但是可以通过正则给所有的标签加上class
 
-```tsx
+```jsx
 export function addRichTextClass(text:string){
   // 去掉标签里面的style和class，加上统一的class，例如p_class
   const rmStyle =(tag:string):[RegExp,string] =>
@@ -63,25 +63,7 @@ https://github.com/NervJS/taro/issues/6084
   </View>)}
 ```
 
-![image-20210323170914216](/Users/g2/Library/Application Support/typora-user-images/image-20210323170914216.png)
-
 其实就是需要加key，这报错看的一头雾水
-
-### 全面屏适配问题
-
-![image-20210324143954710](/Users/g2/Library/Application Support/typora-user-images/image-20210324143954710.png)
-
-像这种底部固定的按钮，底部需要留一个安全区 
-
-很简单 加上` env(safe-area-inset-bottom)`就可以了
-
-![image-20210324144056584](/Users/g2/Library/Application Support/typora-user-images/image-20210324144056584.png)
-
-比如这个是136px 那么这部分的height为 `height: calc( 136px + env(safe-area-inset-bottom));`
-
-参考：https://blog.csdn.net/qq_42354773/article/details/81018615
-
-
 
 ### Taro.navigateBack() 无法向回退的页面传参
 
