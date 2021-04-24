@@ -63,5 +63,36 @@ const Son = connect(state => {
 
 ok，目前只是做到了**选择数据**，接下来就可以尝试实现精准渲染啦。
 
+其实核心就是对比，也就是在`connect`中update的时候，对比一下选择的数据改变了没即可。
+
+```jsx
+// 判断数据是否发生变化
+const changed = (one, two) => {
+    for (let k in one) {
+        if (one[k] !== two[k]) {
+            return  true
+        }
+    }
+    return false
+}
+export const connect = (selector) => (Compenent) => {
+  return (props) => {
+    ...
+    const data = selector ? selector(state) : { state }
+    useEffect(() => {
+        return subscribe(() => {
+            const newData = selector ? selector(store.state) : {state: store.state}
+            if (changed(data, newData)) {
+                update({})
+            }
+        })
+    }, [selector])
+    return <Compenent {...props} {...data} dispach={dispach} />
+  }
+}
+```
+
+这样的话，当改变`user.name`时，son因为并没有用到user，所以也不会跟着刷新，
+这样就实现了精准渲染。
 
 
