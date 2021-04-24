@@ -9,7 +9,7 @@
     
     <title>
         
-            进击的巨人 |
+            通过context实现redux(2) |
         
         Tian
     </title>
@@ -119,7 +119,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">进击的巨人</span>
+            <span class="title-hover-animation">通过context实现redux(2)</span>
         </div>
 
         
@@ -137,20 +137,31 @@
                     <div class="meta-info">
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
-        <i class="fas fa-edit"></i>&nbsp;2021-04-10 19:05:00
+        <i class="fas fa-edit"></i>&nbsp;2021-04-13 14:59:58
     </span>
     
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/react/">react</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
     
 
     
     
         <span class="article-wordcount article-meta-item">
-            <i class="fas fa-file-word"></i>&nbsp;<span>438 Words</span>
+            <i class="fas fa-file-word"></i>&nbsp;<span>563 Words</span>
         </span>
     
     
         <span class="article-min2read article-meta-item">
-            <i class="fas fa-clock"></i>&nbsp;<span>1 Mins</span>
+            <i class="fas fa-clock"></i>&nbsp;<span>2 Mins</span>
         </span>
     
     
@@ -166,11 +177,22 @@
         
 
         <div class="article-content markdown-body">
-            <p>初识巨人和很多人一样，都是来源于 2011 年的热潮，因为当时在上高中，所以第一部甚至都没有完整的看完，主要是对二次元也没有很大的兴趣。<br><code>红莲の弓矢</code>几乎是我当时对这部作品的所有印象：一个有点意思的，画风有点奇怪的<del>美食番</del>作品。</p>
-<p>真正让我对它感兴趣的还是第二季动画的结尾，<br>从一个杀怪的故事变成了杀人的故事。<br>强烈的好奇心驱使我几天之内就看完了所有的漫画，期间的震撼感甚至可以说是前所未有的。<br>没别的原因，就是觉得好看精彩，整个故事几乎每能个能说的上话的人都能感觉到他们是比较真实的，<br>每个人的目标，理想都不完全相同，有挣扎，也有自己的小心思<br>。各种暗线伏笔也是恰到好处。 <em>白夜</em> 就是整部作品的最高光。</p>
-<p>那时候我认为巨人是不可能烂尾的作品，因为在谏山创构建的无比精细的世界中，<br>随意选择一种方向来结局都不可能会被称为’烂‘,<br>然而我还是太天真了，<br>从艾伦的接头行动成功发起地鸣的那一刻，我就感觉可能会有问题。在这之后的漫画似乎一直在挖坑，<del>这一般就是烂尾的前兆</del><br>一个坑没有解决，反而又挖了两个新坑…总之就是越来越无语。</p>
-<p>到最后终于爆炸了，我甚至都不太意外。</p>
-<p>进击的巨人可以和 the last of us 2 竞争一下了。</p>
+            <h2 id="精准渲染组件"><a href="#精准渲染组件" class="headerlink" title="精准渲染组件"></a>精准渲染组件</h2><p>现在的需要解决的问题在于如果store里面的一个内容变化了，那么所有用到store的组件都会跟着刷新<br><del>这好吗？这不好</del> 。所以这次就来实现只渲染数据变化的部分，<br>如果未发生变化的话就不更新。</p>
+<p>首先在store的state上加一个不会改变的数据<code>team</code>，然后把它放到son组件中：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">state: &#123;</span><br><span class="line">    user: &#123; <span class="attr">name</span>: <span class="string">&#x27;frank&#x27;</span>, <span class="attr">age</span>: <span class="number">18</span> &#125;,</span><br><span class="line">    team: &#123; <span class="attr">name</span>: <span class="string">&#x27;A-team&#x27;</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line">  <span class="comment">// son</span></span><br><span class="line">&lt;section&gt;son team:&#123;stor.team.name&#125;&lt;/section&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>目标就是当store里面只有user改变时，son并不会跟着刷新</strong></p>
+<p>改造当然要放到<code>connect()</code>里面啦,先让它接受一个<code>selector</code>来让组件选择接受哪些数据：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> connect = <span class="function">(<span class="params">selector</span>) =&gt;</span> <span class="function">(<span class="params">Compenent</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function">(<span class="params">props</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; state, setState, subscribe &#125; = useContext(appContext)</span><br><span class="line">    <span class="keyword">const</span> [, update] = useState(&#123;&#125;)</span><br><span class="line">      <span class="comment">// 这里选择传入的state，默认为整个store</span></span><br><span class="line">    <span class="keyword">const</span> data = selector ? selector(state) : &#123; state &#125;</span><br><span class="line">    <span class="keyword">const</span> dispach = <span class="function">(<span class="params">action</span>) =&gt;</span> &#123;</span><br><span class="line">      setState(reducer(state, action))</span><br><span class="line">    &#125;</span><br><span class="line">    useEffect(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">const</span> clean = store.subscribe(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">         update(&#123;&#125;)</span><br><span class="line">      &#125;)</span><br><span class="line">      <span class="keyword">return</span> clean</span><br><span class="line">    &#125;, [selector])</span><br><span class="line">    <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">Compenent</span> &#123;<span class="attr">...props</span>&#125; &#123;<span class="attr">...data</span>&#125; <span class="attr">dispach</span>=<span class="string">&#123;dispach&#125;</span> /&gt;</span></span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后在所有用到<code>connect</code>的地方改造一下:</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> User = connect()(<span class="function">(<span class="params">&#123; state &#125;</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;user&#x27;</span>)</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>User:&#123;state.user.name&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">const</span> Son = connect(<span class="function"><span class="params">state</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123; <span class="attr">team</span>: state.team &#125;</span><br><span class="line">&#125;)(<span class="function">(<span class="params">&#123; team &#125;</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;son&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> (<span class="xml"><span class="tag">&lt;<span class="name">section</span>&gt;</span>son team:&#123;team.name&#125;<span class="tag">&lt;/<span class="name">section</span>&gt;</span></span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>ok，目前只是做到了<strong>选择数据</strong>，接下来就可以尝试实现精准渲染啦。</p>
+<p>其实核心就是对比，也就是在<code>connect</code>中update的时候，对比一下选择的数据改变了没即可。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断数据是否发生变化</span></span><br><span class="line"><span class="keyword">const</span> changed = <span class="function">(<span class="params">one, two</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> k <span class="keyword">in</span> one) &#123;</span><br><span class="line">        <span class="keyword">if</span> (one[k] !== two[k]) &#123;</span><br><span class="line">            <span class="keyword">return</span>  <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> connect = <span class="function">(<span class="params">selector</span>) =&gt;</span> <span class="function">(<span class="params">Compenent</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function">(<span class="params">props</span>) =&gt;</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">const</span> data = selector ? selector(state) : &#123; state &#125;</span><br><span class="line">    useEffect(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> subscribe(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">const</span> newData = selector ? selector(store.state) : &#123;<span class="attr">state</span>: store.state&#125;</span><br><span class="line">            <span class="keyword">if</span> (changed(data, newData)) &#123;</span><br><span class="line">                update(&#123;&#125;)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;, [selector])</span><br><span class="line">    <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">Compenent</span> &#123;<span class="attr">...props</span>&#125; &#123;<span class="attr">...data</span>&#125; <span class="attr">dispach</span>=<span class="string">&#123;dispach&#125;</span> /&gt;</span></span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样的话，当改变<code>user.name</code>时，son因为并没有用到user，所以也不会跟着刷新，<br>这样就实现了精准渲染。</p>
 
         </div>
 
@@ -182,18 +204,33 @@
                     <div class="article-prev">
                         <a class="prev"
                            rel="prev"
-                           href="/2021/04/13/redux/"
+                           href="/2021/04/15/mini-program/"
                         >
                             <span class="left arrow-icon flex-center">
                               <i class="fas fa-chevron-left"></i>
                             </span>
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">通过context实现redux(1)</span>
+                                <span class="post-nav-title-item">小程序踩坑记录</span>
                                 <span class="post-nav-item">Prev posts</span>
                             </span>
                         </a>
                     </div>
                 
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2021/04/13/redux/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">通过context实现redux(1)</span>
+                                <span class="post-nav-item">Next posts</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
                 
             </div>
         
@@ -392,7 +429,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B2%BE%E5%87%86%E6%B8%B2%E6%9F%93%E7%BB%84%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">精准渲染组件</span></a></li></ol>
     </div>
 </div>
         </aside>

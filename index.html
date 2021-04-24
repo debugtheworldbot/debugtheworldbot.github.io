@@ -169,17 +169,60 @@
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2021/04/13/redux/">
-                        通过context实现redux
+                    <a href="/2021/04/13/redux-2/">
+                        通过context实现redux(2)
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        first version先看页面：
+                        精准渲染组件现在的需要解决的问题在于如果store里面的一个内容变化了，那么所有用到store的组件都会跟着刷新这好吗？这不好 。所以这次就来实现只渲染数据变化的部分，如果未发生变化的话就不更新。
+首先在store的state上加一个不会改变的数据t...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Tue Apr 13 2021 14:59:58 GMT+0000">2021-04-13</span></span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fas fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/react/">react</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2021/04/13/redux-2/">Read more&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+                    <i class="fas fa-thumbtack top-icon"></i>
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2021/04/13/redux/">
+                        通过context实现redux(1)
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        先尝试实现一个简单的全局store和setStore先看页面：
 
 目前的实现非常简单，直接看代码：
-1234567891011121314151617181920212223242526272829303132333435363738394041424344// App.js...
+123456789101112131415161718192021222324252627282930313233343536373839404142...
                     
                 </div>
 
@@ -212,7 +255,7 @@
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2021/04/21/hello-world/">
+                    <a href="/2021/04/24/hello-world/">
                         hexo init
                     </a>
                 </h3>
@@ -225,12 +268,12 @@
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Wed Apr 21 2021 06:11:55 GMT+0000">2021-04-21</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat Apr 24 2021 13:50:05 GMT+0000">2021-04-24</span></span>
         
         
     </div>
 
-    <a href="/2021/04/21/hello-world/">Read more&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2021/04/24/hello-world/">Read more&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
