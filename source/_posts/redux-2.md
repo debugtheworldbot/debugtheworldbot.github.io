@@ -1,6 +1,6 @@
 ---
 title: 通过context实现redux(2)
-date: 2021-04-13 14:59:58
+date: 2021-04-27 17:59:58
 tags: react
 sticky: 1
 ---
@@ -95,4 +95,70 @@ export const connect = (selector) => (Compenent) => {
 这样的话，当改变`user.name`时，son因为并没有用到user，所以也不会跟着刷新，
 这样就实现了精准渲染。
 
+和select state一样，还需要用相同的方法加入select dispatcher，即选择更新的内容，最终的用法应该是这样的
 
+```jsx
+// connectToUser.jsx
+
+import { connect } from '../redux'
+const userSelector = state => {
+    return { user: state.user }
+}
+const userDispatch = (dispatch) => {
+    return {
+        updateUser: (attrs) => dispatch({ type: 'updateUser', payload: attrs })
+    }
+}
+export const connectToUser = connect(userSelector, userDispatch)
+```
+
+在connect内部实现：
+
+```jsx
+ ...
+const dispatcher = dispatcherSelector ? dispatcherSelector(dispatch) : {dispatch}
+ ...
+return <Component {...props} {...data} {...dispatcher} />
+```
+
+然后在组件中使用的时候，就可以直接使用`updateUser`，同时所有用到对应`store`的地方都会更新
+
+```jsx
+const UserModifier = connectToUser(({updateUser, user}) => {
+  console.log('usermocidifer');
+  const onChange = (e) => {
+    updateUser({name: e.target.value}) // here
+  }
+  return <div>
+    <input value={user.name}
+           onChange={onChange} />
+  </div>
+})
+```
+
+这样就算基本完成了redux的核心功能，其中最主要的还是`connect`的实现，放`connect`的最终代码：
+
+```jsx
+export const connect = (StateSelector, dispatcherSelector) => (Component) => {
+  return (props) => {
+    const dispatch = (action) => {
+      setState(store.reducer(state, action))
+    }
+    const {state, setState, subscribe} = useContext(appContext)
+    const [, update] = useState({})
+    const data = StateSelector ? StateSelector(state) : {state}
+    const dispatcher = dispatcherSelector ? dispatcherSelector(dispatch) : {dispatch}
+    useEffect(() => {
+      return subscribe(() => {
+        const newData = StateSelector ? StateSelector(store.state) : {state: store.state}
+        if (changed(data, newData)) {
+          update({})
+        }
+      })
+    }, [StateSelector])
+    return <Component {...props} {...data} {...dispatcher} />
+  }
+}
+```
+
+只要理解它就可以弄明白redux的思想是什么样子的了
