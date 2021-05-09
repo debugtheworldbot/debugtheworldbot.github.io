@@ -9,7 +9,7 @@
     
     <title>
         
-            小程序踩坑记录 |
+            为了了解原理，我做了一个简易的 Virtual DOM |
         
         Tian
     </title>
@@ -119,7 +119,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">小程序踩坑记录</span>
+            <span class="title-hover-animation">为了了解原理，我做了一个简易的 Virtual DOM</span>
         </div>
 
         
@@ -141,11 +141,22 @@
     </span>
     
     
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/react/">react</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
 
     
     
         <span class="article-wordcount article-meta-item">
-            <i class="fas fa-file-word"></i>&nbsp;<span>651 Words</span>
+            <i class="fas fa-file-word"></i>&nbsp;<span>603 Words</span>
         </span>
     
     
@@ -166,19 +177,26 @@
         
 
         <div class="article-content markdown-body">
-            <h3 id="html"><a href="#html" class="headerlink" title="html"></a>html</h3><p>类似于隐私协议的应用html文件（dangerouslySetInnerHTML），无法通过标签名来修改样式，但是可以通过正则给所有的标签加上class</p>
-<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">addRichTextClass</span>(<span class="params">text:string</span>)</span>&#123;</span><br><span class="line">  <span class="comment">// 去掉标签里面的style和class，加上统一的class，例如p_class</span></span><br><span class="line">  <span class="keyword">const</span> rmStyle =(tag:string):[<span class="built_in">RegExp</span>,string] =&gt;</span><br><span class="line">    [<span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">`&lt;<span class="subst">$&#123;tag&#125;</span>([\\s\\w\&quot;=\\/\\.:;]+)((?:(style=\&quot;[^\&quot;]+\&quot;)))`</span>,<span class="string">&quot;ig&quot;</span>),<span class="string">`&lt;<span class="subst">$&#123;tag&#125;</span>`</span>];</span><br><span class="line">  <span class="keyword">const</span> rmClass =(tag:string):[<span class="built_in">RegExp</span>,string] =&gt;</span><br><span class="line">    [<span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">`&lt;<span class="subst">$&#123;tag&#125;</span>([\\s\\w\&quot;=\\/\\.:;]+)((?:(class=\&quot;[^\&quot;]+\&quot;)))`</span>,<span class="string">&quot;ig&quot;</span>),<span class="string">`&lt;<span class="subst">$&#123;tag&#125;</span>`</span>]</span><br><span class="line">  <span class="keyword">const</span> addClass =(tag:string):[<span class="built_in">RegExp</span>,string] =&gt;</span><br><span class="line">    [<span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">`&lt;<span class="subst">$&#123;tag&#125;</span>&gt;`</span>,<span class="string">&quot;ig&quot;</span>),<span class="string">`&lt;<span class="subst">$&#123;tag&#125;</span> class=&quot;<span class="subst">$&#123;tag&#125;</span>_class&quot;&gt;`</span>]</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> text</span><br><span class="line">      .replace(...rmStyle(<span class="string">&#x27;p&#x27;</span>))</span><br><span class="line">      .replace(...rmClass(<span class="string">&#x27;p&#x27;</span>))</span><br><span class="line">      .replace(...addClass(<span class="string">&#x27;p&#x27;</span>))</span><br><span class="line"></span><br><span class="line">      .replace(...rmStyle(<span class="string">&#x27;span&#x27;</span>))</span><br><span class="line">      .replace(...rmClass(<span class="string">&#x27;span&#x27;</span>))</span><br><span class="line">      .replace(...addClass(<span class="string">&#x27;span&#x27;</span>))</span><br><span class="line"></span><br><span class="line">      .replace(...rmStyle(<span class="string">&#x27;section&#x27;</span>))</span><br><span class="line">      .replace(...rmClass(<span class="string">&#x27;section&#x27;</span>))</span><br><span class="line">      .replace(...addClass(<span class="string">&#x27;section&#x27;</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">usage</span><br><span class="line">&lt;View className=<span class="string">&#x27;protocol-wrapper&#x27;</span>&gt;</span><br><span class="line"> &lt;RichText nodes=&#123;addRichTextClass(protocolText)&#125; /&gt;</span><br><span class="line">&lt;/View&gt;</span><br></pre></td></tr></table></figure>
+            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><h3 id="什么是virtual-dom？"><a href="#什么是virtual-dom？" class="headerlink" title="什么是virtual dom？"></a>什么是virtual dom？</h3><blockquote>
+<p>Virtual DOM 是一种编程概念。在这个概念里， UI 以一种理想化的，或者说“虚拟的”表现形式被保存于内存中，并通过如 ReactDOM 等类库使之与“真实的” DOM 同步。这一过程叫做协调。</p>
+</blockquote>
+<blockquote>
+<p>这种方式赋予了 React 声明式的 API：您告诉 React 希望让 UI 是什么状态，React 就确保 DOM 匹配该状态。这使您可以从属性操作、事件处理和手动 DOM 更新这些在构建应用程序时必要的操作中解放出来。</p>
+</blockquote>
+<blockquote>
+<p>与其将 “Virtual DOM” 视为一种技术，不如说它是一种模式，人们提到它时经常是要表达不同的东西。在 React 的世界里，术语 “Virtual DOM” 通常与 React 元素关联在一起，因为它们都是代表了用户界面的对象。而 React 也使用一个名为 “fibers” 的内部对象来存放组件树的附加信息。上述二者也被认为是 React 中 “Virtual DOM” 实现的一部分。</p>
+</blockquote>
+<p>知道是怎么回事和知道怎么做还是有很大区别的，所以这次就尝试实现一个简易的virtual dom。<br>内容主要参考自 <a class="link"   target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=85gJMUEcnkc" >🎥 Building a Simple Virtual DOM from Scratch — Jason Yu<i class="fas fa-external-link-alt"></i></a> ，<br>这位老哥直接现场coding实现，还是很牛逼的。</p>
+<p>废话就不多说了,let’s get into it.</p>
+<h2 id="实现一些基本的ReactDom-api"><a href="#实现一些基本的ReactDom-api" class="headerlink" title="实现一些基本的ReactDom api"></a>实现一些基本的ReactDom api</h2><p>包括<code>createElement</code>,<code>render</code>,<code>mount</code></p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// createElement.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> createElement = (tagName: <span class="built_in">string</span>, <span class="attr">options</span>: Options): <span class="function"><span class="params">VElement</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> vElem = <span class="built_in">Object</span>.create(<span class="literal">null</span>) <span class="comment">// pure object , no prototype</span></span><br><span class="line">  <span class="built_in">Object</span>.assign(vElem, &#123;tagName, <span class="attr">attrs</span>: options.attrs, <span class="attr">children</span>: options.children&#125;)</span><br><span class="line">  <span class="keyword">return</span> vElem</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// mount.ts</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> mount = <span class="function">(<span class="params">node: HTMLElement|Text, target: HTMLElement|Text</span>) =&gt;</span> &#123;</span><br><span class="line">  target.replaceWith(node)</span><br><span class="line">  <span class="keyword">return</span> node</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// render.ts</span></span><br><span class="line"><span class="keyword">const</span> _render = (vNode: VElement): <span class="function"><span class="params">HTMLElement</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> $el = <span class="built_in">document</span>.createElement(vNode.tagName)</span><br><span class="line">  <span class="keyword">const</span> &#123;attrs = &#123;&#125;, children = []&#125; = vNode</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> [k, v] <span class="keyword">of</span> <span class="built_in">Object</span>.entries(attrs)) &#123;</span><br><span class="line">    $el.setAttribute(k, v)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> child <span class="keyword">of</span> children) &#123;</span><br><span class="line">    $el.appendChild(render(child))</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> $el</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> render = (vNode: ChildrenType): HTMLElement|<span class="function"><span class="params">Text</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 这里的需要判断渲染的东西是否是一个纯string</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> vNode === <span class="string">&#x27;string&#x27;</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">document</span>.createTextNode(vNode)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> _render(vNode)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="Please-do-not-register-multiple-Pages"><a href="#Please-do-not-register-multiple-Pages" class="headerlink" title="Please do not register multiple Pages"></a><a class="link"   target="_blank" rel="noopener" href="https://github.com/NervJS/taro/issues/6084#" >Please do not register multiple Pages<i class="fas fa-external-link-alt"></i></a></h3><p><a class="link"   target="_blank" rel="noopener" href="https://github.com/NervJS/taro/issues/6084" >https://github.com/NervJS/taro/issues/6084<i class="fas fa-external-link-alt"></i></a> </p>
-<p>简单来说，在<code>app.config.js</code>的<code>pages</code>中配置了某个页面，然后又在某处代码中import了这个页面里面的函数，就会出现这个错误。</p>
-<p>原因：这样的行为是不推荐的，因为页面文件会被一个特殊的 loader 处理[1]，如果同一个页面多次运行这个 loader 可能会出现意想不到的情况出现。</p>
-<p>如果确实需要在其他地方引用页面组件，我们推荐把页面组件的逻辑抽象为一个单独的普通组件，然后在页面组件中直接渲染或继承这个普通组件，其它的地方也可以正常引入并使用这个普通组件。</p>
-<p>之后的版本在编译时检测这样的行为会直接报错并引导到此 issue。</p>
-<p>[1] 具体来说就是创造一个小程序 <code>Page()</code> 函数能接受的对象，并调用 <code>Page()</code> 函数，由于 <code>Page()</code> 必须调用才能创建页面，而 Taro 没办法控制 <code>Page()</code> 调用之后的结果，因此这个 loader 是做不到幂等的。</p>
-<h3 id="jsx的map问题"><a href="#jsx的map问题" class="headerlink" title="jsx的map问题"></a>jsx的map问题</h3><figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;[[<span class="string">&#x27;a&#x27;</span>]].map(<span class="function"><span class="params">b</span>=&gt;</span></span><br><span class="line">  &lt;View&gt;</span><br><span class="line">    &#123;b.map(<span class="function"><span class="params">c</span>=&gt;</span><span class="xml"><span class="tag">&lt;<span class="name">View</span>&gt;</span>&#123;c&#125;<span class="tag">&lt;/<span class="name">View</span>&gt;</span></span>)&#125;</span><br><span class="line">  &lt;/View&gt;)&#125;</span><br></pre></td></tr></table></figure>
-
-<p>其实就是需要加key，这报错看的一头雾水</p>
-<h3 id="Taro-navigateBack-无法向回退的页面传参"><a href="#Taro-navigateBack-无法向回退的页面传参" class="headerlink" title="Taro.navigateBack() 无法向回退的页面传参"></a>Taro.navigateBack() 无法向回退的页面传参</h3><p>小程序的几个导航api,都可以通过 <strong>url</strong> 给对应的页面传参。而 Taro.navigateBack({delta}), 只接受一个delta（返回的页面数）参数。但是有时候确确实实有向回退页面传参数的情况，这时候就只能通过mobx之类的来处理了。</p>
+<p>在实现了这三个方法之后，就可以尝试先render一下了：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// index.ts</span></span><br><span class="line"><span class="keyword">import</span> &#123;mount&#125; <span class="keyword">from</span> <span class="string">&#x27;./mount&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = createElement(<span class="string">&#x27;div&#x27;</span>, &#123;</span><br><span class="line">  attrs: &#123;</span><br><span class="line">    id: <span class="string">&#x27;app&#x27;</span>,</span><br><span class="line">    name: <span class="string">&#x27;father&#x27;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  children: [</span><br><span class="line">    createElement(<span class="string">&#x27;div&#x27;</span>, &#123;<span class="attr">children</span>: [<span class="string">&#x27;just string&#x27;</span>]&#125;),</span><br><span class="line">  ]</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">mount(render(app),<span class="built_in">document</span>.getElementById(<span class="string">&#x27;app&#x27;</span>))</span><br></pre></td></tr></table></figure>
+<p>就可以看到这个了<br><img src="/images/vDom-1.png" alt="img.png"></p>
+<p>这样准备工作就算基本完成了。</p>
 
         </div>
 
@@ -190,13 +208,13 @@
                     <div class="article-prev">
                         <a class="prev"
                            rel="prev"
-                           href="/2021/04/27/redux-2/"
+                           href="/2021/04/15/mini-program/"
                         >
                             <span class="left arrow-icon flex-center">
                               <i class="fas fa-chevron-left"></i>
                             </span>
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">通过context实现redux(2)</span>
+                                <span class="post-nav-title-item">小程序踩坑记录</span>
                                 <span class="post-nav-item">Prev posts</span>
                             </span>
                         </a>
@@ -206,10 +224,10 @@
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2021/04/15/vDOM/"
+                           href="/2021/04/13/redux/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">为了了解原理，我做了一个简易的 Virtual DOM</span>
+                                <span class="post-nav-title-item">通过context实现redux(1)</span>
                                 <span class="post-nav-item">Next posts</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -415,7 +433,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#html"><span class="nav-number">1.</span> <span class="nav-text">html</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Please-do-not-register-multiple-Pages"><span class="nav-number">2.</span> <span class="nav-text">Please do not register multiple Pages</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jsx%E7%9A%84map%E9%97%AE%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">jsx的map问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Taro-navigateBack-%E6%97%A0%E6%B3%95%E5%90%91%E5%9B%9E%E9%80%80%E7%9A%84%E9%A1%B5%E9%9D%A2%E4%BC%A0%E5%8F%82"><span class="nav-number">4.</span> <span class="nav-text">Taro.navigateBack() 无法向回退的页面传参</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFvirtual-dom%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">什么是virtual dom？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%BA%9B%E5%9F%BA%E6%9C%AC%E7%9A%84ReactDom-api"><span class="nav-number">2.</span> <span class="nav-text">实现一些基本的ReactDom api</span></a></li></ol>
     </div>
 </div>
         </aside>
