@@ -1,10 +1,12 @@
 ---
-title: 为了了解原理，我做了一个简易的 Virtual DOM 
+title: 为了了解原理，我做了一个简易的 Virtual DOM
 date: 2021-04-15 14:40:19
 tags: react
+sticky: 1
 ---
 
 ## 前言
+
 ### 什么是virtual dom？
 
 > Virtual DOM 是一种编程概念。在这个概念里， UI 以一种理想化的，或者说“虚拟的”表现形式被保存于内存中，并通过如 ReactDOM 等类库使之与“真实的” DOM 同步。这一过程叫做协调。
@@ -25,12 +27,13 @@ tags: react
 
 ```typescript
 // createElement.ts
-export const createElement = (tagName: string, options: Options): VElement => {
+export const createElement = (tagName: string, options: VOptions): VElement => {
   const vElem = Object.create(null) // pure object , no prototype
   Object.assign(vElem, {tagName, attrs: options.attrs, children: options.children})
   return vElem
 }
 ```
+
 ```typescript
 // mount.ts
 export const mount = (node: HTMLElement|Text, target: HTMLElement|Text) => {
@@ -38,6 +41,7 @@ export const mount = (node: HTMLElement|Text, target: HTMLElement|Text) => {
   return node
 }
 ```
+
 ```typescript
 // render.ts
 const _render = (vNode: VElement): HTMLElement => {
@@ -66,6 +70,7 @@ export const render = (vNode: ChildrenType): HTMLElement|Text => {
 ```typescript
 // index.ts
 import {mount} from './mount'
+
 const app = createElement('div', {
   attrs: {
     id: 'app',
@@ -76,20 +81,22 @@ const app = createElement('div', {
   ]
 })
 
-mount(render(app),document.getElementById('app'))
+mount(render(app), document.getElementById('app'))
 ```
+
 就可以看到这个了
 ![img.png](/images/vDom-1.png)
 
 这样准备工作就算基本完成了。
 
 接下来在mount的app中来个每秒变化的`count`:
+
 ```typescript
 // index.ts
 const createApp = (count: number) => createElement('div', {
   attrs: {name: 'hello', count: String(count)},
   children: [
-    createElement('div', {children:[`count:${count}`]}),
+    createElement('div', {children: [`count:${count}`]}),
     createElement('input', {}),
   ]
 })
@@ -105,22 +112,143 @@ setInterval(() => {
   app = newApp
 }, 1000)
 ```
-这时候count每秒都会更新，但是现在的问题在于每次都是直接更新整个app，
-导致创建的`input`明明没有发生任何变化，却依然跟着在刷新，导致无法连续输入。
+
+这时候count每秒都会更新，但是现在的问题在于每次都是直接更新整个app， 导致创建的`input`明明没有发生任何变化，却依然跟着在刷新，导致无法连续输入。
 
 ## 实现`diff`
-这时候就需要来一个`diff`了，先假定一下api: 
+
+这时候就需要来一个`diff`了，先假定一下api:
+
 ```typescript
 // index.ts
 setInterval(() => {
   count++
   const newApp = createApp(count)
-  const patch = diff(app, newApp) 
+  const patch = diff(app, newApp)
   patch(root)
   app = newApp
 }, 1000)
 ```
-先`diff`一下新老树的区别，然后返回一个`patch`来更新dom。
 
+先`diff`一下新老树的区别，然后返回一个`patch`来更新dom。 首先要判断新节点是否存在，如果不存在就直接remove掉。 然后是新和旧至少有一个是`string`，这有三种情况： 如果二者之中只有一个是`string`
+，那节点肯定变了，直接渲染新的；如果都是`string`，再比较二者是否相同。
+
+最后，如果tagName相同，就需要对比attrs和children，然后再patch更新一下 写字也没啥用，直接上完整代码：
+
+```typescript
+// diff.ts
+
+import {mount} from './mount'
+import {render} from './render'
+
+export const diff = (oldVNode: VElement|string, newVNode?: VElement|string) => {
+  if (!newVNode) {
+    return (node: TElement) => {
+      node.remove()
+    }
+  }
+  if (typeof oldVNode === 'string' || typeof newVNode === 'string') {
+    if (oldVNode !== newVNode) {
+      return (node: TElement) => {
+        mount(render(newVNode), node)
+      }
+    }
+  } else if (oldVNode.tagName !== newVNode.tagName) {
+    return (node: HTMLElement) => {
+      mount(render(newVNode), node)
+    }
+  } else {
+    const patchAttrs = diffAttrs(oldVNode.attrs, newVNode.attrs)
+    const patchChildren = diffChildren(oldVNode.children, newVNode.children)
+    return (node) => {
+      patchAttrs(node)
+      patchChildren(node)
+    }
+  }
+}
+```
+
+关于`diffAttrs`我觉得没啥好说的，生成一个patch list然后更新就完事了。
+
+而`diffChildren`，可以先考虑节点数相同时，那么就直接在patch list里面把各项`diff`即可， 如果`oldChildren.length > newChildren.length`也是一样的， 因为我们实现的`diff`接受的新tree可以为空
+
+如果`oldChildren.length < newChildren.length`的话，也可以先对比到`oldChildren.length`，然后再把新树 添加的内容加上，所以前面就可以写成：
+
+```typescript
+const childPatches = []
+const additionalPatches = []
+for (let i = 0; i < oldChildren.length; i++) {
+  childPatches.push(diff(oldChildren[i], newChildren[i]))
+}
+newChildren.slice(oldChildren.length).forEach(additionalVChild => {
+  additionalPatches.push($node => {
+    $node.appendChild(render(additionalVChild))
+  })
+})
+```
+
+还需要注意的是返回的函数接受的node是父节点，如果在`additionalPatches`中，因为是直接`appendChild`，
+而`childPatches`中的`diff`改变的应该是`parent.childNodes`,所以最后返回的结果为：
+
+```typescript
+return (parent: TElement) => {
+  for (let i = childPatches.length - 1; i >= 0; i--) {
+    const patch = childPatches[i]
+    patch(parent.childNodes[i])
+  }
+  for (const patch of additionalPatches) {
+    patch(parent)
+  }
+}
+```
+
+最终的代码：
+
+```typescript
+const diffAttrs = (oldAttrs: Attrs = {}, newAttrs: Attrs = {}) => {
+  const patches = []
+  for (const [k, v] of Object.entries(newAttrs)) {
+    patches.push((node: HTMLElement) => {
+      node.setAttribute(k, v)
+    })
+  }
+  for (const [k] of Object.entries(oldAttrs)) {
+    if (!(k in newAttrs)) {
+      patches.push((node: HTMLElement) => {
+        node.removeAttribute(k)
+      })
+    }
+  }
+  return (node) => {
+    for (const patch of patches) {
+      patch(node)
+    }
+  }
+}
+const diffChildren = (oldChildren: VChild[] = [], newChildren: VChild[] = []) => {
+  const childPatches = []
+  const additionalPatches = []
+  for (let i = 0; i < oldChildren.length; i++) {
+    childPatches.push(diff(oldChildren[i], newChildren[i]))
+  }
+  newChildren.slice(oldChildren.length).forEach(additionalVChild => {
+    additionalPatches.push($node => {
+      $node.appendChild(render(additionalVChild));
+    });
+  });
+
+  return (parent: TElement) => {
+    for (let i = childPatches.length - 1; i >= 0; i--) {
+      const patch = childPatches[i]
+      patch(parent.childNodes[i])
+    }
+    for (const patch of additionalPatches) {
+      patch(parent)
+    }
+  }
+}
+```
+所以这样就算是完成了，[完整代码在这里](https://github.com/debugtheworldbot/virtual-dom) ,
+虽然是非常非常简略的virtual dom，还有各种更新view的case没有cover到，但是整个流程下来还是学到了不少的，
 
 
