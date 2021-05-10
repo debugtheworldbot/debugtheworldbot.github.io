@@ -66,7 +66,6 @@ export const render = (vNode: ChildrenType): HTMLElement|Text => {
 ```typescript
 // index.ts
 import {mount} from './mount'
-
 const app = createElement('div', {
   attrs: {
     id: 'app',
@@ -83,4 +82,45 @@ mount(render(app),document.getElementById('app'))
 ![img.png](/images/vDom-1.png)
 
 这样准备工作就算基本完成了。
+
+接下来在mount的app中来个每秒变化的`count`:
+```typescript
+// index.ts
+const createApp = (count: number) => createElement('div', {
+  attrs: {name: 'hello', count: String(count)},
+  children: [
+    createElement('div', {children:[`count:${count}`]}),
+    createElement('input', {}),
+  ]
+})
+
+let count = 0
+let app = createApp(count)
+const root = mount(render(app), document.getElementById('app'))
+
+setInterval(() => {
+  count++
+  const newApp = createApp(count)
+  mount(render(newApp))
+  app = newApp
+}, 1000)
+```
+这时候count每秒都会更新，但是现在的问题在于每次都是直接更新整个app，
+导致创建的`input`明明没有发生任何变化，却依然跟着在刷新，导致无法连续输入。
+
+## 实现`diff`
+这时候就需要来一个`diff`了，先假定一下api: 
+```typescript
+// index.ts
+setInterval(() => {
+  count++
+  const newApp = createApp(count)
+  const patch = diff(app, newApp) 
+  patch(root)
+  app = newApp
+}, 1000)
+```
+先`diff`一下新老树的区别，然后返回一个`patch`来更新dom。
+
+
 
