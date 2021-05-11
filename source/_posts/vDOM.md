@@ -1,7 +1,6 @@
 ---
 title: 为了了解原理，我做了一个简易的 Virtual DOM
 date: 2021-04-15 14:40:19
-tags: react
 sticky: 1
 ---
 
