@@ -129,8 +129,7 @@ setInterval(() => {
 }, 1000)
 ```
 
-先`diff`一下新老树的区别，然后返回一个`patch`来更新dom。 首先要判断新节点是否存在，如果不存在就直接remove掉。 然后是新和旧至少有一个是`string`，这有三种情况： 如果二者之中只有一个是`string`
-，那节点肯定变了，直接渲染新的；如果都是`string`，再比较二者是否相同。
+先`diff`一下新老树的区别，然后返回一个`patch`来更新dom。 首先要判断新节点是否存在，如果不存在就直接remove掉。 然后是新和旧至少有一个是`string`，这有三种情况： 如果二者之中只有一个是`string`，那节点肯定变了，直接渲染新的；如果都是`string`，再比较二者是否相同。
 
 最后，如果tagName相同，就需要对比attrs和children，然后再patch更新一下 写字也没啥用，直接上完整代码：
 
@@ -187,7 +186,11 @@ newChildren.slice(oldChildren.length).forEach(additionalVChild => {
 ```
 
 还需要注意的是返回的函数接受的node是父节点，如果在`additionalPatches`中，因为是直接`appendChild`，
-而`childPatches`中的`diff`改变的应该是`parent.childNodes`,所以最后返回的结果为：
+而`childPatches`中的`diff`改变的应该是`parent.childNodes`。
+
+然后在for-loop中需要注意删除子节点，可能会导致i超过`parent.childNodes`的长度，所以就可以从最后一个childNode开始处理，在刪除时也不会因为`childNode`被刪除，导致意外的bug。
+所以最后返回的结果为：
+
 
 ```typescript
 return (parent: TElement) => {
