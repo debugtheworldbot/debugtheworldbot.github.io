@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="TTT">
+    
+    <title>
+        
+            GraphQL 实践(1) |
+        
+        Tian
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="https://www.linkpicture.com/q/thumb-219022.jpg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"en"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":true,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"https://www.linkpicture.com/q/thumb-219022.jpg","favicon":"https://www.linkpicture.com/q/thumb-219022.jpg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"30% of myself made by code"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":false}}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":true,"style":"default"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.3"};
+    KEEP.language_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+  </script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                Tian
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                HOME
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                ARCHIVES
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">HOME</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">ARCHIVES</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">GraphQL 实践(1)</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="https://www.linkpicture.com/q/thumb-219022.jpg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">TTT</span>
+                        
+                            <span class="author-label">Trainee</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;2021-05-24 16:29:00
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/GraphQL/">GraphQL</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fas fa-file-word"></i>&nbsp;<span>728 Words</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fas fa-clock"></i>&nbsp;<span>3 Mins</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h2 id="overview"><a href="#overview" class="headerlink" title="overview"></a>overview</h2><blockquote>
+<p>GraphQL is the rising star of backend technologies. It replaces REST as an API design paradigm and is becoming the new standard for exposing the data and functionality of a web server. is the rising star of backend technologies. It replaces REST as an API design paradigm and is becoming the new standard for exposing the data and functionality of a web server.</p>
+</blockquote>
+<p>其实就是日常都是用的RESTFul API，感觉有点过于单调了，就想来尝试一下GraphQL</p>
+<h2 id="using-packages"><a href="#using-packages" class="headerlink" title="using packages"></a>using packages</h2><p>当然用的是<code>nodejs</code>啦，还有下面几个👇</p>
+<blockquote>
+<ul>
+<li><code>Apollo server</code>:Fully-featured GraphQL Server with focus on easy setup, performance and great developer experience, graphql-js and more.</li>
+<li><code>Prisma</code>: Replaces traditional ORMs. Use Prisma Client to access your database inside of GraphQL resolvers.</li>
+<li>GraphQL Playground: A “GraphQL IDE” that allows you to interactively explore the functionality of a GraphQL API by sending queries and mutations to it. It’s somewhat similar to Postman which offers comparable functionality for REST APIs.</li>
+</ul>
+</blockquote>
+<h2 id="goal"><a href="#goal" class="headerlink" title="goal"></a>goal</h2><p>实现一个简单的<a class="link"   target="_blank" rel="noopener" href="https://news.ycombinator.com/news" >hacker news<i class="fas fa-external-link-alt"></i></a> ，包含CRUD，注册登陆等基本功能</p>
+<p>废话不多说，Let’s get started 🚀</p>
+<h2 id="get-started"><a href="#get-started" class="headerlink" title="get started"></a>get started</h2><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// package.json</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;hackernews-node&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;version&quot;</span>: <span class="string">&quot;1.0.0&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;main&quot;</span>: <span class="string">&quot;index.js&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;license&quot;</span>: <span class="string">&quot;MIT&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;dependencies&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;apollo-server&quot;</span>: <span class="string">&quot;^2.24.1&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;graphql&quot;</span>: <span class="string">&quot;^15.5.0&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// src/main.js</span></span><br><span class="line"><span class="keyword">const</span> &#123; ApolloServer &#125; = <span class="built_in">require</span>(<span class="string">&#x27;apollo-server&#x27;</span>);</span><br><span class="line"><span class="comment">// 定义数据格式</span></span><br><span class="line"><span class="keyword">const</span> typeDefs = <span class="string">`</span></span><br><span class="line"><span class="string">  type Query &#123;</span></span><br><span class="line"><span class="string">    info: String!</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">`</span></span><br><span class="line"><span class="comment">// 具体的数据操作放在resolvers里面，eg:CRUD</span></span><br><span class="line"><span class="keyword">const</span> resolvers = &#123;</span><br><span class="line">  Query: &#123;</span><br><span class="line">    info: <span class="function">() =&gt;</span> <span class="string">`This is the API of a Hackernews Clone`</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 把typeDefs和resolvers传给ApolloServer</span></span><br><span class="line"><span class="keyword">const</span> server = <span class="keyword">new</span> ApolloServer(&#123;</span><br><span class="line">  typeDefs,</span><br><span class="line">  resolvers,</span><br><span class="line">&#125;)</span><br><span class="line">server</span><br><span class="line">  .listen()</span><br><span class="line">  .then(<span class="function">(<span class="params">&#123; url &#125;</span>) =&gt;</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">`Server is running on <span class="subst">$&#123;url&#125;</span>`</span>)</span><br><span class="line">  );</span><br></pre></td></tr></table></figure>
+<h3 id="test-server"><a href="#test-server" class="headerlink" title="test server"></a>test server</h3><p>在根目录运行  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node src/index.js`,</span><br></pre></td></tr></table></figure>
+<p>就打开了<code>GraphQL Playground</code>，在左边输入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">query &#123;</span><br><span class="line">  info</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>得到的应该是这样的结果：<br><img src="/images/graphQL.png" alt="1"><br>这就是一个简单的<code>query</code>了，接下来可以考虑加上更多的查询：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">type Query&#123;</span><br><span class="line">    info:String!</span><br><span class="line">    feed:[Link!]!</span><br><span class="line">    link(id: ID!): Link</span><br><span class="line">&#125;</span><br><span class="line">type Mutation&#123;</span><br><span class="line">    post(url:String!,description:String!):Link!</span><br><span class="line">    update(id:ID!,url:String!,description:String!):Link</span><br><span class="line">    delete(id:ID!):Link</span><br><span class="line">&#125;</span><br><span class="line">type Link&#123;</span><br><span class="line">    id:ID!</span><br><span class="line">    description:String!</span><br><span class="line">    url:String!</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Query</code>就是查询，<code>feed</code>返回的是所有的links,而<code>link(id)</code>则是根据id返回对应的link，同理<code>Mutation</code>里面就是<br>增改删了,回到<code>index.js</code>:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// src/index.js</span></span><br><span class="line">...</span><br><span class="line"><span class="keyword">let</span> links = [&#123;</span><br><span class="line">  id: <span class="string">&#x27;link-0&#x27;</span>,</span><br><span class="line">  url: <span class="string">&#x27;www.howtographql.com&#x27;</span>,</span><br><span class="line">  description: <span class="string">&#x27;Fullstack tutorial for GraphQL&#x27;</span></span><br><span class="line">&#125;]</span><br><span class="line"><span class="keyword">let</span> idCount = links.length</span><br><span class="line"><span class="keyword">const</span> resolvers = &#123;</span><br><span class="line">  Query: &#123;</span><br><span class="line">    info: <span class="function">() =&gt;</span> <span class="string">&#x27;this is the api of hackerNews!&#x27;</span>,</span><br><span class="line">    feed: <span class="function">() =&gt;</span> links,</span><br><span class="line">    link: <span class="function">(<span class="params">parent, args</span>) =&gt;</span> links.find(<span class="function"><span class="params">l</span> =&gt;</span> l.id === args.id)</span><br><span class="line">  &#125;,</span><br><span class="line">  Mutation: &#123;</span><br><span class="line">    post: <span class="function">(<span class="params">parent, args</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">const</span> link = &#123;</span><br><span class="line">        id: <span class="string">`link-<span class="subst">$&#123;idCount++&#125;</span>`</span>,</span><br><span class="line">        description: args.description,</span><br><span class="line">        url: args.url</span><br><span class="line">      &#125;</span><br><span class="line">      links.push(link)</span><br><span class="line">      <span class="keyword">return</span> link</span><br><span class="line">    &#125;,</span><br><span class="line">    update: <span class="function">(<span class="params">parent, args</span>) =&gt;</span> &#123;</span><br><span class="line">      links = links.map(<span class="function"><span class="params">l</span> =&gt;</span> l.id === args.id ? args : l)</span><br><span class="line">      <span class="keyword">return</span> args</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="keyword">delete</span>: <span class="function">(<span class="params">parent, args</span>) =&gt;</span> &#123;</span><br><span class="line">      links = links.filter(<span class="function"><span class="params">l</span> =&gt;</span> l.id !== args.id)</span><br><span class="line">      <span class="keyword">return</span> args</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>可以在playground里面尝试一下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">mutation &#123;</span><br><span class="line">    post(url: &quot;www.prisma.io&quot;, description: &quot;Prisma replaces traditional ORMs&quot;) &#123;</span><br><span class="line">    id</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">mutation &#123;</span><br><span class="line">    update(id:&quot;link-0&quot;,url: &quot;www.baidu.com&quot;, description: &quot;this is baidu&quot;)&#123;</span><br><span class="line">        id</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">mutation &#123;</span><br><span class="line">    delete(id:&quot;link-0&quot;)&#123;</span><br><span class="line">        id</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样就实现了简单的crud了，但是到现在还没有用数据库保存数据，所以现在每次重启数据都没啦</p>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2021/05/24/hello-world/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">hexo init</span>
+                                <span class="post-nav-item">Next posts</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;Comments</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="//cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'Fj6gQz9zqpSIny6yIBPgQhj4-gzGzoHsz',
+                    appKey: 'BlmmvmISSVV7c3ci6xngKuvg',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '😜 尽情吐槽吧~',
+                    lang: 'en'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'TTT';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>&nbsp;-&nbsp;
+            
+            2021&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">TTT</a>
+        </div>
+        
+            <script async  src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    <span id="busuanzi_container_site_uv">
+                        Visitor Count&nbsp;<span id="busuanzi_value_site_uv"></span>&ensp;
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv">
+                        Totalview&nbsp;<span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="theme-info info-item">
+            Powered by <a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;|&nbsp;Theme&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.3</a>
+        </div>
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#overview"><span class="nav-number">1.</span> <span class="nav-text">overview</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#using-packages"><span class="nav-number">2.</span> <span class="nav-text">using packages</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#goal"><span class="nav-number">3.</span> <span class="nav-text">goal</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#get-started"><span class="nav-number">4.</span> <span class="nav-text">get started</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#test-server"><span class="nav-number">4.1.</span> <span class="nav-text">test server</span></a></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>

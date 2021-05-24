@@ -11,7 +11,7 @@
   --selection-color: #0075eb;
   --shadow-color: rgba(0,0,0,0.2);
   --shadow-hover-color: rgba(0,0,0,0.28);
-  --scrollbar-color: #585865;
+  --scrollbar-color: #595967;
   --scroll-bar-bg-color: #e6e6e6;
   --link-color: #484853;
   --copyright-info-color: #c03;
@@ -32,7 +32,7 @@
     --selection-color: #0075eb;
     --shadow-color: rgba(0,0,0,0.2);
     --shadow-hover-color: rgba(0,0,0,0.28);
-    --scrollbar-color: #585865;
+    --scrollbar-color: #595967;
     --scroll-bar-bg-color: #e6e6e6;
     --link-color: #484853;
     --copyright-info-color: #c03;
@@ -75,7 +75,7 @@
   --selection-color: #0075eb;
   --shadow-color: rgba(0,0,0,0.2);
   --shadow-hover-color: rgba(0,0,0,0.28);
-  --scrollbar-color: #585865;
+  --scrollbar-color: #595967;
   --scroll-bar-bg-color: #e6e6e6;
   --link-color: #484853;
   --copyright-info-color: #c03;
@@ -104,7 +104,7 @@
 }
 .fade-in-down-animation {
   animation-fill-mode: both;
-  animation-duration: 0.8s;
+  animation-duration: 1s;
   animation-name: fade-in-down;
 }
 .title-hover-animation {
@@ -137,7 +137,7 @@
 @-moz-keyframes fade-in-down {
   0% {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-50px);
   }
   100% {
     opacity: 1;
@@ -147,7 +147,7 @@
 @-webkit-keyframes fade-in-down {
   0% {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-50px);
   }
   100% {
     opacity: 1;
@@ -157,7 +157,7 @@
 @-o-keyframes fade-in-down {
   0% {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-50px);
   }
   100% {
     opacity: 1;
@@ -167,7 +167,7 @@
 @keyframes fade-in-down {
   0% {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-50px);
   }
   100% {
     opacity: 1;
@@ -237,8 +237,8 @@
   transition-timing-function: ease, ease, ease, ease;
 }
 *::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   transition: all 0.2s ease;
 }
 *::-webkit-scrollbar-thumb {
@@ -262,7 +262,7 @@ body {
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
   width: 8px;
-  height: 6px;
+  height: 8px;
 }
 @media (max-width: 780px) {
   html,

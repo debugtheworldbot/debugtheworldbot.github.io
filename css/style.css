@@ -11,7 +11,7 @@
   --selection-color: #0075eb;
   --shadow-color: rgba(0,0,0,0.2);
   --shadow-hover-color: rgba(0,0,0,0.28);
-  --scrollbar-color: #585865;
+  --scrollbar-color: #595967;
   --scroll-bar-bg-color: #e6e6e6;
   --link-color: #484853;
   --copyright-info-color: #c03;
@@ -32,7 +32,7 @@
     --selection-color: #0075eb;
     --shadow-color: rgba(0,0,0,0.2);
     --shadow-hover-color: rgba(0,0,0,0.28);
-    --scrollbar-color: #585865;
+    --scrollbar-color: #595967;
     --scroll-bar-bg-color: #e6e6e6;
     --link-color: #484853;
     --copyright-info-color: #c03;
@@ -75,7 +75,7 @@
   --selection-color: #0075eb;
   --shadow-color: rgba(0,0,0,0.2);
   --shadow-hover-color: rgba(0,0,0,0.28);
-  --scrollbar-color: #585865;
+  --scrollbar-color: #595967;
   --scroll-bar-bg-color: #e6e6e6;
   --link-color: #484853;
   --copyright-info-color: #c03;
@@ -104,7 +104,7 @@
 }
 .fade-in-down-animation {
   animation-fill-mode: both;
-  animation-duration: 0.8s;
+  animation-duration: 1s;
   animation-name: fade-in-down;
 }
 .title-hover-animation {
@@ -137,7 +137,7 @@
 @-moz-keyframes fade-in-down {
   0% {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-50px);
   }
   100% {
     opacity: 1;
@@ -147,7 +147,7 @@
 @-webkit-keyframes fade-in-down {
   0% {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-50px);
   }
   100% {
     opacity: 1;
@@ -157,7 +157,7 @@
 @-o-keyframes fade-in-down {
   0% {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-50px);
   }
   100% {
     opacity: 1;
@@ -167,7 +167,7 @@
 @keyframes fade-in-down {
   0% {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-50px);
   }
   100% {
     opacity: 1;
@@ -237,8 +237,8 @@
   transition-timing-function: ease, ease, ease, ease;
 }
 *::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   transition: all 0.2s ease;
 }
 *::-webkit-scrollbar-thumb {
@@ -262,7 +262,7 @@ body {
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
   width: 8px;
-  height: 6px;
+  height: 8px;
 }
 @media (max-width: 780px) {
   html,
@@ -549,7 +549,7 @@ button {
   --selection-color: #0075eb;
   --shadow-color: rgba(0,0,0,0.2);
   --shadow-hover-color: rgba(0,0,0,0.28);
-  --scrollbar-color: #585865;
+  --scrollbar-color: #595967;
   --scroll-bar-bg-color: #e6e6e6;
   --link-color: #484853;
   --copyright-info-color: #c03;
@@ -570,7 +570,7 @@ button {
     --selection-color: #0075eb;
     --shadow-color: rgba(0,0,0,0.2);
     --shadow-hover-color: rgba(0,0,0,0.28);
-    --scrollbar-color: #585865;
+    --scrollbar-color: #595967;
     --scroll-bar-bg-color: #e6e6e6;
     --link-color: #484853;
     --copyright-info-color: #c03;
@@ -613,7 +613,7 @@ button {
   --selection-color: #0075eb;
   --shadow-color: rgba(0,0,0,0.2);
   --shadow-hover-color: rgba(0,0,0,0.28);
-  --scrollbar-color: #585865;
+  --scrollbar-color: #595967;
   --scroll-bar-bg-color: #e6e6e6;
   --link-color: #484853;
   --copyright-info-color: #c03;
@@ -933,30 +933,30 @@ pre .javascript .function {
   }
 }
 .page-container .page-main-content {
-  padding-top: 76px;
+  padding-top: 70px;
   position: relative;
 }
 .header-shrink .page-container .page-main-content {
-  padding-top: 54.72px;
+  padding-top: 50.4px;
 }
 @media (max-width: 780px) {
   .header-shrink .page-container .page-main-content {
-    padding-top: 49.248px;
+    padding-top: 45.36px;
   }
 }
 @media (max-width: 500px) {
   .header-shrink .page-container .page-main-content {
-    padding-top: 43.776px;
+    padding-top: 40.32px;
   }
 }
 @media (max-width: 780px) {
   .page-container .page-main-content {
-    padding-top: 68.4px;
+    padding-top: 63px;
   }
 }
 @media (max-width: 500px) {
   .page-container .page-main-content {
-    padding-top: 60.800000000000004px;
+    padding-top: 56px;
   }
 }
 .page-container .page-main-content .page-main-content-top {
@@ -964,7 +964,7 @@ pre .javascript .function {
   top: 0;
   right: 0;
   width: 100%;
-  height: 76px;
+  height: 70px;
   z-index: 1005;
   box-sizing: border-box;
   transition-property: color, background, box-shadow, border-color, transform, padding-left, height;
@@ -976,27 +976,27 @@ pre .javascript .function {
   transform: translateY(-105%);
 }
 .header-shrink .page-container .page-main-content .page-main-content-top {
-  height: 54.72px;
+  height: 50.4px;
 }
 @media (max-width: 780px) {
   .header-shrink .page-container .page-main-content .page-main-content-top {
-    height: 49.248px;
+    height: 45.36px;
   }
 }
 @media (max-width: 500px) {
   .header-shrink .page-container .page-main-content .page-main-content-top {
-    height: 43.776px;
+    height: 40.32px;
   }
 }
 @media (max-width: 780px) {
   .page-container .page-main-content .page-main-content-top {
-    height: 68.4px;
+    height: 63px;
     padding-left: 0 !important;
   }
 }
 @media (max-width: 500px) {
   .page-container .page-main-content .page-main-content-top {
-    height: 60.800000000000004px;
+    height: 56px;
   }
 }
 .page-container .page-main-content .page-main-content-middle {
@@ -1063,7 +1063,7 @@ pre .javascript .function {
 }
 .page-container .post-tools {
   position: fixed;
-  top: 114px;
+  top: 108px;
   right: 38px;
   transition-property: color, background, box-shadow, border-color, top;
   transition-delay: 0s, 0s, 0s, 0s, 0s;
@@ -1071,21 +1071,21 @@ pre .javascript .function {
   transition-timing-function: ease, ease, ease, ease, ease;
 }
 .header-shrink .page-container .post-tools {
-  top: 92.72px;
+  top: 88.4px;
 }
 @media (max-width: 780px) {
   .header-shrink .page-container .post-tools {
-    top: 87.24799999999999px;
+    top: 83.36px;
   }
 }
 @media (max-width: 500px) {
   .header-shrink .page-container .post-tools {
-    top: 81.77600000000001px;
+    top: 78.32px;
   }
 }
 @media (max-width: 780px) {
   .page-container .post-tools {
-    top: 106.4px;
+    top: 101px;
     right: 10px;
     transform: scale(0.82);
     transform-origin: right top;
@@ -1093,7 +1093,7 @@ pre .javascript .function {
 }
 @media (max-width: 500px) {
   .page-container .post-tools {
-    top: 98.80000000000001px;
+    top: 94px;
     right: 5px;
     transform: scale(0.72);
   }
@@ -1462,11 +1462,11 @@ pre .javascript .function {
   transition-timing-function: ease, ease, ease, ease, linear;
 }
 .header-shrink .header-wrapper .header-content .left {
-  transform: scale(0.85);
+  transform: scale(0.72);
   transform-origin: left;
 }
 .header-wrapper .header-content .left .logo-title {
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: bold;
   letter-spacing: 1px;
   line-height: 1;
@@ -1474,12 +1474,12 @@ pre .javascript .function {
 }
 @media (max-width: 780px) {
   .header-wrapper .header-content .left .logo-title {
-    font-size: 1.98rem;
+    font-size: 1.8rem;
   }
 }
 @media (max-width: 500px) {
   .header-wrapper .header-content .left .logo-title {
-    font-size: 1.76rem;
+    font-size: 1.6rem;
   }
 }
 .header-wrapper .header-content .right .pc .menu-list {
@@ -1519,7 +1519,7 @@ pre .javascript .function {
 }
 .header-shrink .header-wrapper .header-content .right .pc .menu-list .menu-item a:hover::after,
 .header-shrink .header-wrapper .header-content .right .pc .menu-list .menu-item .active::after {
-  bottom: -15.36px;
+  bottom: -13.2px;
 }
 .header-wrapper .header-content .right .pc .menu-list .menu-item.search {
   font-size: 1.5rem;
@@ -1592,7 +1592,7 @@ pre .javascript .function {
 }
 .header-wrapper .header-drawer {
   width: 100%;
-  padding: 76px 0 20px 0;
+  padding: 70px 0 20px 0;
   position: absolute;
   top: 0;
   left: 0;
@@ -1893,16 +1893,16 @@ pre .javascript .function {
   width: 100%;
   overflow: hidden;
   background: url("/images/bg.svg") center center/cover no-repeat;
-  background-position-y: 76px;
+  background-position-y: 70px;
 }
 @media (max-width: 780px) {
   .first-screen-container {
-    background-position-y: 68.4px;
+    background-position-y: 63px;
   }
 }
 @media (max-width: 500px) {
   .first-screen-container {
-    background-position-y: 60.800000000000004px;
+    background-position-y: 56px;
   }
 }
 .first-screen-container .content {
