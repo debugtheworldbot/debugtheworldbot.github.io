@@ -1,6 +1,7 @@
 ---
 title: GraphQL 实践(1)
-date: 2021-05-24 16:29:00 tags: GraphQL
+date: 2021-05-24 16:29:00
+tags: GraphQL
 ---
 
 ## overview
@@ -167,7 +168,35 @@ mutation {
 ```
 
 这样就实现了简单的crud了，但是到现在还没有用数据库保存数据，所以现在每次重启数据都没啦， 那么下一步就需要用到`prisma` 来连接数据库了。
+### add database
+```
+yarn add -D prisma
+npx prisma init
+```
+在创建的`prisma/schema.prisma`文件中，修改成`sqlite`:
+```prisma
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
 
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Link {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  description String
+  url         String
+}
+```
+之后就可以`migrate`和`generate`了
+```
+npx prisma migrate dev
+npx prisma generate
+```
+这样数据库就准备好了，下一步开始连接。
 ### connecting server and database
 
 在GraphQL的resolver函数里面接受的是4个参数，第三个就是`context`, 就和字面意思一样，它是不同resolver之间沟通的桥梁
@@ -215,6 +244,9 @@ const resolvers = {
 关于`prisma`的CRUD，可以看看 [官方文档](https://www.prisma.io/docs/concepts/components/prisma-client/crud)
 
 然后可以运行`npx prisma studio`在 [http://localhost:5555](http://localhost:5555) 查看到所有的数据
+
+### Authentication
+
 
 
 
