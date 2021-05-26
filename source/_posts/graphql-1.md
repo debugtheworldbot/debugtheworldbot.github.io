@@ -246,6 +246,107 @@ const resolvers = {
 然后可以运行`npx prisma studio`在 [http://localhost:5555](http://localhost:5555) 查看到所有的数据
 
 ### Authentication
+第一件事，需要添加一个User model，并且将其与Link关联：
+```prisma
+model Link {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  description String
+  url         String
+  postedBy    User?    @relation(fields: [postedById], references: [id])
+  postedById  Int?
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  links     Link[]
+}
+```
+接着重新运行`migrate`和`generate`，是不是感觉有点蠢，每次修改prisma都需要运行一下下面两个命令，在之后会把它做成自动化的，
+现在就先重新运行一下:
+```
+npx prisma migrate dev --name "add-user-model"
+npx prisma generate
+```
+在`src/schema.graphql`里面添加signUp和logIn，同时在Link里面添加`postedBy`使其与User关联：
+```graphql
+type User{
+    id:ID!
+    name:String!
+    email:String!
+    links:[Link!]!
+}
+type AuthPayload {
+    token:String
+    user:User
+}
+
+type Query{
+    feed:[Link!]!
+    link(id: ID!): Link
+}
+type Mutation{
+    post(url:String!,description:String!):Link!
+    updatePost(id:ID!,url:String!,description:String!):Link
+    deletePost(id:ID!):Link
+    signUp(email:String!,name:String!,password:String!):AuthPayload
+    logIn(email:String!,password:String!):AuthPayload
+}
+
+type Link{
+    id:ID!
+    description:String!
+    url:String!
+    postedBy:User!
+}
+```
+因为操作逐渐变得复杂起来，所以需要重构一下，把对应的方法分离：
+```
+mkdir src/resolvers
+touch src/resolvers/Query.js
+touch src/resolvers/Mutation.js
+touch src/resolvers/User.js
+touch src/resolvers/Link.js
+```
+在对应的文件做对应的事情，具体的代码就是一些copy&paste，就不展开，主要看一下`Mutation.js`里面的`signUp`和`logIn`:
+
+```javascript
+//src.Mutation.js
+async function signup(parent, args, context, info) {
+  const password = await bcrypt.hash(args.password, 10)
+  const user = await context.prisma.user.create({ data: { ...args, password } })
+  const token = jwt.sign({ userId: user.id }, APP_SECRET)
+  return {
+    token,
+    user,
+  }
+}
+
+async function login(parent, args, context, info) {
+  const user = await context.prisma.user.findUnique({ where: { email: args.email } })
+  if (!user) {
+    throw new Error('No such user found')
+  }
+  const valid = await bcrypt.compare(args.password, user.password)
+  if (!valid) {
+    throw new Error('Invalid password')
+  }
+  const token = jwt.sign({ userId: user.id }, APP_SECRET)
+  return {
+    token,
+    user,
+  }
+}
+
+module.exports = {
+  signup,
+  login,
+}
+```
+关于signup，就是先hash加盐密码，然后创建user，生成jwt(JSON Web Token)，最后返回user和token
 
 
 
