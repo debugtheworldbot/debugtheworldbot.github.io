@@ -346,7 +346,171 @@ module.exports = {
   login,
 }
 ```
-关于signup，就是先hash加盐密码，然后创建user，生成jwt(JSON Web Token)，最后返回user和token
+关于signup，就是先hash加盐密码，然后创建user，生成 [JSON Web Token](https://github.com/auth0/node-jsonwebtoken) ，最后返回user和token;login的话，就是找user，对比密码，拿到token。
+
+之后需要在`context`里面传入`userId`:
+```javascript
+// index.js
+const server = new ApolloServer({
+  typeDefs: fs.readFileSync(
+    path.join(__dirname, 'schema.graphql'),
+    'utf8'
+  ),
+  resolvers,
+  context: ({ req }) => {
+    return {
+      ...req,
+      prisma,
+      userId:
+        req && req.headers.authorization
+          ? getUserId(req)
+          : null
+    };
+  }
+});
+```
+```javascript
+// utils.js
+const jwt = require('jsonwebtoken');
+const APP_SECRET = 'GraphQL-is-aw3some';
+
+function getTokenPayload(token) {
+  return jwt.verify(token, APP_SECRET);
+}
+
+function getUserId(req, authToken) {
+  if (req) {
+    const authHeader = req.headers.authorization;
+    if (authHeader) {
+      const token = authHeader.replace('Bearer ', '');
+      if (!token) {
+        throw new Error('No token found');
+      }
+      const { userId } = getTokenPayload(token);
+      return userId;
+    }
+  } else if (authToken) {
+    const { userId } = getTokenPayload(authToken);
+    return userId;
+  }
+
+  throw new Error('Not authenticated');
+}
+
+module.exports = {
+  APP_SECRET,
+  getUserId
+};
+```
+
+那么对于post，就可以通过`context`拿到userId了：
+```javascript
+// mutation.js
+async function post(parent, args, context) {
+  const { userId } = context;
+
+  return await context.prisma.link.create({
+    data: {
+      url: args.url,
+      description: args.description,
+      postedBy: { connect: { id: userId } },
+    }
+  })
+}
+```
+还需要做的一件事是把`Link`里面的`postedBy`和`User`里面的`links`关联起来，否则的话graphQL不知道应该从哪里去获取数据
+```javascript
+// src/resolvers/Link.js
+function postedBy(parent, args, context) {
+  return context.prisma.link.findUnique({ where: { id: parent.id } }).postedBy()
+}
+
+module.exports = {
+  postedBy,
+}
+```
+注意，最后调用的`postedBy()`必须得叫这个名字，它需要与`schema.graphql`里面的`type Link`中的定义一致。
+同样的，在User中定义links：
+```javascript
+// src/resolvers/User.js
+function links(parent, args, context) {
+  return context.prisma.user.findUnique({ where: { id: parent.id } }).links()
+}
+
+module.exports = {
+  links,
+}
+```
+最后把它们引入resolver:
+```javascript
+const resolvers = {
+  Query,
+  Mutation,
+  User,
+  Link
+}
+```
+ok,可以开始测一测鉴权了！ 🔓
+```
+mutation {
+  signup(name: "Alice", email: "alice@prisma.io", password: "graphql") {
+    token
+    user {
+      id
+    }
+  }
+}
+```
+返回的东西应该是类似于这样子:
+```
+{
+  "data": {
+    "signUp": {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTYyMjAxMTE1MX0.9yvVPC-9JPzeEALoaDS8sUyFDPzhvQCs30b_GI2cL_4",
+      "user": {
+        "id": "3"
+      }
+    }
+  }
+}
+```
+再试试login:
+```
+mutation {
+  logIn(email: "alice@prisma.io", password: "graphql") {
+    token
+    user {
+      email
+      links {
+        url
+        description
+      }
+    }
+  }
+}
+```
+正确的返回值：
+```
+{
+  "data": {
+    "login": {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjanBzaHVsazJoM3lqMDk0NzZzd2JrOHVnIiwiaWF0IjoxNTQ1MDYyNTQyfQ.KjGZTxr1jyJH7HcT_0glRInBef37OKCTDl0tZzogekw",
+      "user": {
+        "email": "alice@prisma.io",
+        "links": []
+      }
+    }
+  }
+}
+```
+如果两个都成功的话,就可以在HTTP HEADER里面加上,`__TOKEN__`换成上面返回的token
+```
+{
+  "Authorization": "Bearer __TOKEN__"
+}
+```
+然后也可以试试post,update,delete操作是否可行了～
+
 
 
 
