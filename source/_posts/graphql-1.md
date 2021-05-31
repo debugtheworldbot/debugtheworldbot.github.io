@@ -1,5 +1,5 @@
 ---
-title: GraphQL 实践(1)
+title: GraphQL 实践
 date: 2021-05-24 16:29:00
 tags: GraphQL
 ---
