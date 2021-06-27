@@ -2,7 +2,6 @@
 title: 通过context实现redux(1)
 date: 2021-04-13 14:59:58
 tags: react
-sticky: 1
 ---
 ## 先尝试实现一个简单的全局store和setStore
 
