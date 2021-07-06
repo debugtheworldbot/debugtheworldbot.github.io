@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="TTT">
+    
+    <title>
+        
+            minipack - 一个极简webpack |
+        
+        Tian
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="https://www.linkpicture.com/q/thumb-219022.jpg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"en"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":true,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"https://www.linkpicture.com/q/thumb-219022.jpg","favicon":"https://www.linkpicture.com/q/thumb-219022.jpg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"30% of myself made by code"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":false}}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":true,"style":"default"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.3"};
+    KEEP.language_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"};
+  </script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                Tian
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                HOME
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                ARCHIVES
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">HOME</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">ARCHIVES</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">minipack - 一个极简webpack</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="https://www.linkpicture.com/q/thumb-219022.jpg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">TTT</span>
+                        
+                            <span class="author-label">Trainee</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;2021-07-06 10:23:40
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/javascript/">javascript</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fas fa-file-word"></i>&nbsp;<span>1.8k Words</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fas fa-clock"></i>&nbsp;<span>8 Mins</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="intro"><a href="#intro" class="headerlink" title="intro"></a>intro</h1><p>什么是 Modules？</p>
+<blockquote>
+<p>在模块化编程中，开发者将程序分解为功能离散的 chunk，并称之为 <strong>Modules</strong>。</p>
+</blockquote>
+<blockquote>
+<p>每个 Module 都拥有小于完整程序的体积，使得验证、调试及测试变得轻而易举。精心编写的 Module 提供了可靠的抽象和封装界限，使得应用程序中每个模块都具备了条理清晰的设计和明确的目的。</p>
+</blockquote>
+<p><code>Module bundlers</code> 应该需要知道入口文件的信息，也就是我们实例的主文件，它将引导启动整个实例。</p>
+<p>所以我们的 bundler 应该从入口文件开始，分析它的依赖，以及依赖的依赖…一直递归到最后一层。而这整个过程最终就会形成一个<code>依赖图谱</code>。</p>
+<p>Let’s go</p>
+<p>note: 这是一个非常简单的栗子。像检查循环引用，对于 module 只 parse 一次等等的操作都是没有的。所以 100 多行代码就能搞定。</p>
+<h1 id="overview"><a href="#overview" class="headerlink" title="overview"></a>overview</h1><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// entry.js</span></span><br><span class="line"><span class="keyword">import</span> world <span class="keyword">from</span> <span class="string">&quot;./world.js&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(world);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// world.js</span></span><br><span class="line"><span class="keyword">import</span> &#123; hello &#125; <span class="keyword">from</span> <span class="string">&quot;./hello.js&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="string">`<span class="subst">$&#123;hello&#125;</span> from world`</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// hello.js</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> hello = <span class="string">&quot;hello&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这个例子的引用顺序就是 entry-&gt;world-&gt;hello ，我们从入口文件开始解析</p>
+<h1 id="create-asset"><a href="#create-asset" class="headerlink" title="create asset"></a>create asset</h1><p>create asset 应该要做以下几件事情:</p>
+<ul>
+<li>读入口文件，转换成 ast</li>
+<li>获取当前文件 import 的文件</li>
+<li>给每个文件一个 id</li>
+<li>转换成 commonjs 的代码，使其能在浏览器运行</li>
+</ul>
+<p>因为 EcmaScript modules 是静态的，它无法导出一个变量，或者有条件的引入某些 module，所以在这里的每一个 import 语句都可以存在统一的 dep 数组里面</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&quot;fs&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&quot;path&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> &#123; parse &#125; = <span class="built_in">require</span>(<span class="string">&quot;@babel/parser&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> traverse = <span class="built_in">require</span>(<span class="string">&quot;@babel/traverse&quot;</span>).default;</span><br><span class="line"><span class="keyword">const</span> &#123; transformFromAst &#125; = <span class="built_in">require</span>(<span class="string">&quot;@babel/core&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> ID = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> createAsset = <span class="function">(<span class="params">path</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> code = fs.readFileSync(path, <span class="string">&quot;utf-8&quot;</span>);</span><br><span class="line">  <span class="keyword">const</span> ast = parse(code, &#123;</span><br><span class="line">    sourceType: <span class="string">&quot;module&quot;</span>,</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="keyword">const</span> deps = []; <span class="comment">// 文件的相对依赖</span></span><br><span class="line">  traverse(ast, &#123;</span><br><span class="line">    ImportDeclaration: <span class="function">(<span class="params">&#123; node &#125;</span>) =&gt;</span> &#123;</span><br><span class="line">      deps.push(node.source.value); <span class="comment">// 这个值为 ‘./world.js’ | &#x27;./hello.js&#x27;</span></span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="keyword">const</span> &#123; <span class="attr">code</span>: transformedCode &#125; = transformFromAst(ast, <span class="literal">null</span>, &#123;</span><br><span class="line">    presets: [<span class="string">&quot;@babel/preset-env&quot;</span>], <span class="comment">// need add this dependency</span></span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">      id:ID++</span><br><span class="line">      code:transformedCode,</span><br><span class="line">      deps,</span><br><span class="line">      path</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这时候 <code>createAsset(./src/entry.js)</code>返回值就是：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  id: <span class="number">0</span>,</span><br><span class="line">  path: <span class="string">&#x27;./src/entry.js&#x27;</span>,</span><br><span class="line">  code: <span class="string">&#x27;&quot;use strict&quot;;\n&#x27;</span> +</span><br><span class="line">    <span class="string">&#x27;var _world = _interopRequireDefault(require(&quot;./world.js&quot;));\n&#x27;</span> +</span><br><span class="line">    <span class="string">&#x27;function _interopRequireDefault(obj) &#123; return obj &amp;&amp; obj.__esModule ? obj : &#123; &quot;default&quot;: obj &#125;; &#125;\n&#x27;</span> +</span><br><span class="line">    <span class="string">&#x27;console.log(_world[&quot;default&quot;]);&#x27;</span>,</span><br><span class="line">  deps: [ <span class="string">&#x27;./world.js&#x27;</span> ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>也可以试试<code>hello.js</code>和<code>world.js</code>，它们是这样的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  id: <span class="number">1</span>,</span><br><span class="line">  path: <span class="string">&#x27;./src/world.js&#x27;</span>,</span><br><span class="line">  code: <span class="string">&#x27;&quot;use strict&quot;;\n&#x27;</span> +</span><br><span class="line">    <span class="string">&#x27;Object.defineProperty(exports, &quot;__esModule&quot;, &#123;\n&#x27;</span> +</span><br><span class="line">    <span class="string">&#x27;  value: true\n&#x27;</span> +</span><br><span class="line">    <span class="string">&#x27;&#125;);\n&#x27;</span> +</span><br><span class="line">    <span class="string">&#x27;exports[&quot;default&quot;] = void 0;\n&#x27;</span> +</span><br><span class="line">    <span class="string">&#x27;var _hello = require(&quot;./hello.js&quot;);\n&#x27;</span> +</span><br><span class="line">    <span class="string">&#x27;var _default = &quot;&quot;.concat(_hello.hello, &quot; from world&quot;);\n&#x27;</span> +</span><br><span class="line">    <span class="string">&#x27;exports[&quot;default&quot;] = _default;&#x27;</span>,</span><br><span class="line">  deps: [ <span class="string">&#x27;./hello.js&#x27;</span> ]</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  id: <span class="number">2</span>,</span><br><span class="line">  path: <span class="string">&#x27;./src/hello.js&#x27;</span>,</span><br><span class="line">  code: <span class="string">&#x27;&quot;use strict&quot;;\n&#x27;</span> +</span><br><span class="line">    <span class="string">&#x27;Object.defineProperty(exports, &quot;__esModule&quot;, &#123;\n&#x27;</span> +</span><br><span class="line">    <span class="string">&#x27;  value: true\n&#x27;</span> +</span><br><span class="line">    <span class="string">&#x27;&#125;);\n&#x27;</span> +</span><br><span class="line">    <span class="string">&#x27;exports.hello = void 0;\n&#x27;</span> +</span><br><span class="line">    <span class="string">&#x27;var hello = &quot;hello&quot;;\n&#x27;</span> +</span><br><span class="line">    <span class="string">&#x27;exports.hello = hello;&#x27;</span>,</span><br><span class="line">  deps: []</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="create-graph"><a href="#create-graph" class="headerlink" title="create graph"></a>create graph</h1><p>在获取到 createAsset 的返回值之后，就可以根据返回值生成 dependancy graph，这个函数将依次做以下几件事情：</p>
+<ul>
+<li>获取 mainAssets，并将所有的 asset 保存在一个数组(<code>asstes</code>)中</li>
+<li>遍历这个<code>assets</code>,同时去读取它的 deps，如果 dep 不为空，就把读取的结果 push 到<code>assets</code>中</li>
+<li>同时生成一个 mapping 来储存 asset 和它的 children 的关系，key 为 deps 里面的路径，value 为当前 asset 的 child 的 id</li>
+<li>返回<code>assets</code>图谱</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> createGraph = <span class="function">(<span class="params">entry</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> mainAssets = createAsset(entry);</span><br><span class="line">  <span class="keyword">const</span> assets = [mainAssets]; <span class="comment">// 初始化assets</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> asset <span class="keyword">of</span> assets) &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; deps, path &#125; = asset;</span><br><span class="line">    <span class="keyword">const</span> dir = path.dirname(path); <span class="comment">// 获取绝对路径</span></span><br><span class="line">    asset.mapping = &#123;&#125;;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> dep <span class="keyword">of</span> deps) &#123;</span><br><span class="line">      <span class="keyword">const</span> child = createAsset(path.join(dir, dep));</span><br><span class="line">      asset.mapping[dep] = child.id;</span><br><span class="line">      assets.push(child); <span class="comment">// 因为是在这里push，所以assets的循环可以一直继续，直到deps为空数组结束</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> assets;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这时候返回的<code>assets</code>为：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">  &#123;</span><br><span class="line">    id: <span class="number">0</span>,</span><br><span class="line">    path: <span class="string">&quot;./src/entry.js&quot;</span>,</span><br><span class="line">    code:</span><br><span class="line">      <span class="string">&#x27;&quot;use strict&quot;;\n&#x27;</span> +</span><br><span class="line">      <span class="string">&#x27;var _world = _interopRequireDefault(require(&quot;./world.js&quot;));\n&#x27;</span> +</span><br><span class="line">      <span class="string">&#x27;function _interopRequireDefault(obj) &#123; return obj &amp;&amp; obj.__esModule ? obj : &#123; &quot;default&quot;: obj &#125;; &#125;\n&#x27;</span> +</span><br><span class="line">      <span class="string">&#x27;console.log(_world[&quot;default&quot;]);&#x27;</span>,</span><br><span class="line">    deps: [<span class="string">&quot;./world.js&quot;</span>],</span><br><span class="line">    mapping: &#123; <span class="string">&quot;./world.js&quot;</span>: <span class="number">1</span> &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    id: <span class="number">1</span>,</span><br><span class="line">    path: <span class="string">&quot;src/world.js&quot;</span>,</span><br><span class="line">    code:</span><br><span class="line">      <span class="string">&#x27;&quot;use strict&quot;;\n&#x27;</span> +</span><br><span class="line">      <span class="string">&#x27;Object.defineProperty(exports, &quot;__esModule&quot;, &#123;\n&#x27;</span> +</span><br><span class="line">      <span class="string">&quot;  value: true\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;&#125;);\n&quot;</span> +</span><br><span class="line">      <span class="string">&#x27;exports[&quot;default&quot;] = void 0;\n&#x27;</span> +</span><br><span class="line">      <span class="string">&#x27;var _hello = require(&quot;./hello.js&quot;);\n&#x27;</span> +</span><br><span class="line">      <span class="string">&#x27;var _default = &quot;&quot;.concat(_hello.hello, &quot; from world&quot;);\n&#x27;</span> +</span><br><span class="line">      <span class="string">&#x27;exports[&quot;default&quot;] = _default;&#x27;</span>,</span><br><span class="line">    deps: [<span class="string">&quot;./hello.js&quot;</span>],</span><br><span class="line">    mapping: &#123; <span class="string">&quot;./hello.js&quot;</span>: <span class="number">2</span> &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    id: <span class="number">2</span>,</span><br><span class="line">    path: <span class="string">&quot;src/hello.js&quot;</span>,</span><br><span class="line">    code:</span><br><span class="line">      <span class="string">&#x27;&quot;use strict&quot;;\n&#x27;</span> +</span><br><span class="line">      <span class="string">&#x27;Object.defineProperty(exports, &quot;__esModule&quot;, &#123;\n&#x27;</span> +</span><br><span class="line">      <span class="string">&quot;  value: true\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;&#125;);\n&quot;</span> +</span><br><span class="line">      <span class="string">&quot;exports.hello = void 0;\n&quot;</span> +</span><br><span class="line">      <span class="string">&#x27;var hello = &quot;hello&quot;;\n&#x27;</span> +</span><br><span class="line">      <span class="string">&quot;exports.hello = hello;&quot;</span>,</span><br><span class="line">    deps: [],</span><br><span class="line">    mapping: &#123;&#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">];</span><br></pre></td></tr></table></figure>
+
+<p>看起来有点样子了,接下来就可以把代码写到文件里面啦~~</p>
+<h1 id="bundle"><a href="#bundle" class="headerlink" title="bundle"></a>bundle</h1><p>根据生成的 graph，就可以把一片片的 code 打包起来了，它返回的是一个立即执行函数，也就是可以直接在浏览器里面运行。<br>也就是这样子：<code>(;function(modules)&#123;&#125;)(modules)</code></p>
+<p>它需要接受一个参数<code>modules</code>：一个带有每一个 graph 信息的对象，也就是这样:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    id:[<span class="function"><span class="title">fn</span>(<span class="params"><span class="built_in">require</span>,<span class="built_in">module</span>,<span class="built_in">exports</span></span>)</span>&#123;code&#125;,mapping]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>id 数组的第一项储存 code，它们都被一个 function 包裹，这样就不会有全局变量污染的问题，这个 function 用的是 commonJS 的形式，所以它需要三个参数 <code>require module exports</code>，需要我们构造一下加进去</p>
+<p>id 数组的第二项就是之前构造的 mapping，大概长这样：<code>mapping: &#123; &quot;./relative/path&quot;: 2 &#125;</code>，也可以往上翻看下生成的 graph</p>
+<p>require 就是请求对应的 code，根据上面的 graph，我们可以让 <code>require(id)</code> 直接获取到对应的 code，但是在生成的代码中，require 应该接受的是一个<strong>相对路径</strong>，这时候我们之前的 mapping 就终于有用了，它刚好就是相对路径和 id 的映射。</p>
+<p>最后，在 commonJS 中，当一个 module 被引入的时候，它会改变自己的 exports 对象，最终被<code>require()</code>返回</p>
+<p>所以 require 就可以这样实现：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">require</span>(<span class="params">id</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> [fn, mapping] = modules[id];</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">localRequire</span>(<span class="params">path</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">require</span>(mapping[path]);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> <span class="built_in">module</span> = &#123; <span class="attr">exports</span>: &#123;&#125; &#125;;</span><br><span class="line">  fn(localRequire, <span class="built_in">module</span>, <span class="built_in">module</span>.exports);</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">module</span>.exports;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最终的 bundle：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> buldle = <span class="function">(<span class="params">graph</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> modules = <span class="string">&quot;&quot;</span>;</span><br><span class="line">  grpah.forEach(<span class="function">(<span class="params">g</span>) =&gt;</span> &#123;</span><br><span class="line">    modules += <span class="string">`<span class="subst">$&#123;g.id&#125;</span>:[function(require,module,exports)&#123;</span></span><br><span class="line"><span class="string">          <span class="subst">$&#123;g.code&#125;</span></span></span><br><span class="line"><span class="string">      &#125;,<span class="subst">$&#123;<span class="built_in">JSON</span>.stringfy(g.mapping)&#125;</span>],`</span>;</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="string">`</span></span><br><span class="line"><span class="string">    ;(function(modules)&#123;</span></span><br><span class="line"><span class="string">        function require (id)&#123;</span></span><br><span class="line"><span class="string">            const [fn,mapping] = modules[id]</span></span><br><span class="line"><span class="string">            function localRequire(path)&#123;</span></span><br><span class="line"><span class="string">                return require(mapping[path])</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">            const module = &#123;exports:&#123;&#125;&#125;</span></span><br><span class="line"><span class="string">            fn(localRequire,module,module.exports)</span></span><br><span class="line"><span class="string">            return module.exports</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">        require(0)</span></span><br><span class="line"><span class="string">    &#125;(&#123;<span class="subst">$&#123;modules&#125;</span>&#125;)) // 这里传的是一个对象</span></span><br><span class="line"><span class="string">  `</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>然后在最后再把 bundle 的代码写入 dist：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> graph = createGraph(<span class="string">&quot;./src/entry.js&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> result = bundle(graph);</span><br><span class="line">fs.writeFileSync(<span class="string">&quot;./dist/bundle.js&quot;</span>, result, &#123; <span class="attr">encoding</span>: <span class="string">&quot;utf-8&quot;</span> &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>把生成的 js 代码放到浏览器里执行：<br><img src="/images/minipack.png" alt="result"></p>
+<p>AWESOME!</p>
+<p>if you want to know more , <a class="link"   target="_blank" rel="noopener" href="https://github.com/debugtheworldbot/miniWebpack" >this is the source code<i class="fas fa-external-link-alt"></i></a></p>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2021/05/24/graphql-1/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">GraphQL 实践</span>
+                                <span class="post-nav-item">Next posts</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;Comments</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script 
+                src="//cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script >
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'Fj6gQz9zqpSIny6yIBPgQhj4-gzGzoHsz',
+                    appKey: 'BlmmvmISSVV7c3ci6xngKuvg',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '😜 尽情吐槽吧~',
+                    lang: 'en'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'TTT';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('false') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>&nbsp;-&nbsp;
+            
+            2021&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">TTT</a>
+        </div>
+        
+            <script async  src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    <span id="busuanzi_container_site_uv">
+                        Visitor Count&nbsp;<span id="busuanzi_value_site_uv"></span>&ensp;
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv">
+                        Totalview&nbsp;<span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="theme-info info-item">
+            Powered by <a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;|&nbsp;Theme&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.3</a>
+        </div>
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#intro"><span class="nav-number">1.</span> <span class="nav-text">intro</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#overview"><span class="nav-number">2.</span> <span class="nav-text">overview</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#create-asset"><span class="nav-number">3.</span> <span class="nav-text">create asset</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#create-graph"><span class="nav-number">4.</span> <span class="nav-text">create graph</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bundle"><span class="nav-number">5.</span> <span class="nav-text">bundle</span></a></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>
