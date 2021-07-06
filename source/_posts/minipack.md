@@ -129,3 +129,77 @@ const createAsset = (path) => {
   deps: []
 }
 ```
+
+# create graph
+
+在获取到 createAsset 的返回值之后，就可以根据返回值生成 dependancy graph，这个函数将依次做以下几件事情：
+
+1. 获取 mainAssets，并将所有的 asset 保存在一个数组(`asstes`)中
+2. 遍历这个`assets`,同时去读取它的 deps，如果 dep 不为空，就把读取的结果 push 到`assets`中
+3. 同时生成一个 mapping 来储存 asset 和它的 children 的关系，key 为 deps 里面的路径，value 为当前 asset 的 child 的 id
+4. 返回`assets`图谱
+
+```js
+const createGraph = (entry) => {
+  const mainAssets = createAsset(entry);
+  const assets = [mainAssets]; // 初始化assets
+  for (const asset of assets) {
+    const { deps, path } = asset;
+    const dir = path.dirname(path); // 获取绝对路径
+    asset.mapping = {};
+    for (const dep of deps) {
+      const child = createAsset(path.join(dir, dep));
+      asset.mapping[dep] = child.id;
+      assets.push(child);
+    }
+  }
+  return assets;
+};
+```
+
+这时候返回的`assets`为：
+
+```js
+ node minipack.js
+[
+  {
+    id: 0,
+    path: './src/entry.js',
+    code: '"use strict";\n' +
+      'var _world = _interopRequireDefault(require("./world.js"));\n' +
+      'function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }\n' +
+      'console.log(_world["default"]);',
+    deps: [ './world.js' ],
+    mapping: { './world.js': 1 }
+  },
+  {
+    id: 1,
+    path: 'src/world.js',
+    code: '"use strict";\n' +
+      'Object.defineProperty(exports, "__esModule", {\n' +
+      '  value: true\n' +
+      '});\n' +
+      'exports["default"] = void 0;\n' +
+      'var _hello = require("./hello.js");\n' +
+      'var _default = "".concat(_hello.hello, " from world");\n' +
+      'exports["default"] = _default;',
+    deps: [ './hello.js' ],
+    mapping: { './hello.js': 2 }
+  },
+  {
+    id: 2,
+    path: 'src/hello.js',
+    code: '"use strict";\n' +
+      'Object.defineProperty(exports, "__esModule", {\n' +
+      '  value: true\n' +
+      '});\n' +
+      'exports.hello = void 0;\n' +
+      'var hello = "hello";\n' +
+      'exports.hello = hello;',
+    deps: [],
+    mapping: {}
+  }
+]
+```
+
+看起来有点样子了,接下来就可以把代码写到文件里面啦
