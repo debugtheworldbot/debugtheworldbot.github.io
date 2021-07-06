@@ -52,6 +52,8 @@ create asset 应该要做以下几件事情:
 - 转换成 commonjs 的代码，使其能在浏览器运行
 - 给每个文件一个 id
 
+因为 EcmaScript modules 是静态的，它不会导出一个变量，或者有条件的引入某些 module，所以在这里的每一个 import 语句都可以存在统一的 dep 数组里面
+
 ```js
 const fs = require("fs");
 const path = require("path");
@@ -66,7 +68,7 @@ const createAsset = (path) => {
   const ast = parse(code, {
     sourceType: "module",
   });
-  const deps = []; // 文件的依赖
+  const deps = []; // 文件的相对依赖
   traverse(ast, {
     ImportDeclaration: ({ node }) => {
       deps.push(node.source.value); // 这个值为 ‘./world.js’ | './hello.js'
@@ -91,11 +93,8 @@ const createAsset = (path) => {
   id: 0,
   path: './src/entry.js',
   code: '"use strict";\n' +
-    '\n' +
     'var _world = _interopRequireDefault(require("./world.js"));\n' +
-    '\n' +
     'function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }\n' +
-    '\n' +
     'console.log(_world["default"]);',
   deps: [ './world.js' ]
 }
@@ -108,16 +107,12 @@ const createAsset = (path) => {
   id: 1,
   path: './src/world.js',
   code: '"use strict";\n' +
-    '\n' +
     'Object.defineProperty(exports, "__esModule", {\n' +
     '  value: true\n' +
     '});\n' +
     'exports["default"] = void 0;\n' +
-    '\n' +
     'var _hello = require("./hello.js");\n' +
-    '\n' +
     'var _default = "".concat(_hello.hello, " from world");\n' +
-    '\n' +
     'exports["default"] = _default;',
   deps: [ './hello.js' ]
 }
@@ -125,7 +120,6 @@ const createAsset = (path) => {
   id: 2,
   path: './src/hello.js',
   code: '"use strict";\n' +
-    '\n' +
     'Object.defineProperty(exports, "__esModule", {\n' +
     '  value: true\n' +
     '});\n' +
