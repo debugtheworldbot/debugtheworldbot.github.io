@@ -435,7 +435,6 @@ const commitWork = (fiber?: Fiber) => {
 };
 
 const isNew = (prev: HTMLProps | {}, next: HTMLProps) => (key: string) =>
-  // @ts-ignore
   prev[key] !== next[key];
 const isGone = (prev: HTMLProps | {}, next: HTMLProps) => (key: string) =>
   !(key in next);
@@ -452,7 +451,6 @@ export const updateDom = (
     .filter(isProperty)
     .filter(isGone(prevProps, nextProps))
     .forEach((name) => {
-      // @ts-ignore
       dom[name] = "";
     });
   // Set new or changed properties
@@ -460,7 +458,6 @@ export const updateDom = (
     .filter(isProperty)
     .filter(isNew(prevProps, nextProps))
     .forEach((name) => {
-      // @ts-ignore
       dom[name] = nextProps[name];
     });
   //Remove old or changed event listeners
@@ -469,7 +466,6 @@ export const updateDom = (
     .filter((key) => !(key in nextProps) || isNew(prevProps, nextProps)(key))
     .forEach((name) => {
       const eventType = name.toLowerCase().substring(2);
-      // @ts-ignore
       dom.removeEventListener(eventType, prevProps[name]);
     });
   // Add event listeners
@@ -478,8 +474,84 @@ export const updateDom = (
     .filter(isNew(prevProps, nextProps))
     .forEach((name) => {
       const eventType = name.toLowerCase().substring(2);
-      // @ts-ignore
       dom.addEventListener(eventType, nextProps[name]);
     });
+};
+```
+
+## Step 7: Function Component & useState
+
+如果我们的例子是这样：
+
+```ts
+import { createElement } from "./react/createElement";
+
+/** @jsx createElement */
+function App(props) {
+  return <h1>Hi {props.name}</h1>;
+}
+const element = <App name="foo" />;
+const container = document.getElementById("root");
+render(element, container);
+```
+
+它变成 js 之后是这样的：
+
+```ts
+function App(props) {
+  return createElement("h1", null, "Hi ", props.name);
+}
+const element = createElement(App, {
+  name: "foo",
+});
+```
+
+所以在 reconcile 之前，应该检查 fiber 是否是 Function,如果是 fiber 的 children 应该调用 `fiber.type`:
+
+```ts
+let wipFiber: VElement;
+let hookIndex: number = -1;
+const isFucComponent = fiber.type instanceof Function;
+if (isFucComponent) {
+  wipFiber = fiber;
+  hookIndex = 0;
+  wipFiber.hooks = [];
+  const children = [(fiber.type as Function)(fiber.props)];
+  reconcileChildren(fiber, children);
+} else {
+  const elements = fiber.props.children;
+  reconcileChildren(fiber, elements);
+}
+```
+
+关于 useState 的实现,我们用一个数组来存 hooks，同时用一个 hookIndex 来追踪状态，每一个 hook 中保存着前一个 state 和一个更新 state 的函数列表，然后调用 setState 时指定 `nextUnitOfWork` 触发 actions 更新 state。
+
+```ts
+export const useState = <T>(initial: T): [T, Function] => {
+  const oldHook = wipFiber?.alternate?.hooks![hookIndex];
+  const hook: { state: T; queue: Function[] } = {
+    state: oldHook ? oldHook.state : initial,
+    // 存放每次更新状态的队列
+    queue: [],
+  };
+  const actions = oldHook ? oldHook.queue : [];
+  actions.forEach(
+    (action) =>
+      (hook.state = action instanceof Function ? action(hook.state) : action)
+  );
+  const setState = (action: Function) => {
+    hook.queue.push(action);
+    wipRoot = {
+      dom: currentRoot?.dom,
+      props: currentRoot?.props!,
+      alternate: currentRoot,
+    };
+    nextUnitOfWork = wipRoot;
+    deletions = [];
+  };
+  wipFiber.hooks?.push(hook);
+  hookIndex++;
+
+  return [hook.state, setState];
 };
 ```
