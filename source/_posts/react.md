@@ -251,13 +251,235 @@ const performUnitOfWork = (fiber)=> {
   let nextFiber = fiber
 
   while (nextFiber) {
-    // step2 如果 有 sibling fiber ，则返回 sibling
+    // 如果有 sibling fiber，则返回 sibling
     if (nextFiber.sibling) {
       return nextFiber.sibling
     }
-    // step3 ，否则 返回 他的 parent fiber
+    // 否则返回它的 parent fiber
     nextFiber = nextFiber.parent
   }
 }
-​
+```
+
+## Step 5: Render and Commit
+
+目前虽然是实现了可中断的 render 了，但是还有个问题就在它们是每次直接把 element 添加到 document 上，如果在这个过程中浏览器暂时中断了渲染的过程，那么就会呈现出不完整的 UI，这是非常不好的，比如 react 官方文档对 `error boundary`的处理有这样的[评论](https://zh-hans.reactjs.org/docs/error-boundaries.html#:~:text=%E6%88%91%E4%BB%AC%E5%AF%B9%E8%BF%99%E4%B8%80%E5%86%B3%E5%AE%9A%E6%9C%89%E8%BF%87%E4%B8%80%E4%BA%9B%E4%BA%89%E8%AE%BA%EF%BC%8C%E4%BD%86%E6%A0%B9%E6%8D%AE%E6%88%91%E4%BB%AC%E7%9A%84%E7%BB%8F%E9%AA%8C%EF%BC%8C%E6%8A%8A%E4%B8%80%E4%B8%AA%E9%94%99%E8%AF%AF%E7%9A%84%20UI%20%E7%95%99%E5%9C%A8%E9%82%A3%E6%AF%94%E5%AE%8C%E5%85%A8%E7%A7%BB%E9%99%A4%E5%AE%83%E8%A6%81%E6%9B%B4%E7%B3%9F%E7%B3%95%E3%80%82%E4%BE%8B%E5%A6%82%EF%BC%8C%E5%9C%A8%E7%B1%BB%E4%BC%BC%20Messenger%20%E7%9A%84%E4%BA%A7%E5%93%81%E4%B8%AD%EF%BC%8C%E6%8A%8A%E4%B8%80%E4%B8%AA%E5%BC%82%E5%B8%B8%E7%9A%84%20UI%20%E5%B1%95%E7%A4%BA%E7%BB%99%E7%94%A8%E6%88%B7%E5%8F%AF%E8%83%BD%E4%BC%9A%E5%AF%BC%E8%87%B4%E7%94%A8%E6%88%B7%E5%B0%86%E4%BF%A1%E6%81%AF%E9%94%99%E5%8F%91%E7%BB%99%E5%88%AB%E4%BA%BA%E3%80%82%E5%90%8C%E6%A0%B7%EF%BC%8C%E5%AF%B9%E4%BA%8E%E6%94%AF%E4%BB%98%E7%B1%BB%E5%BA%94%E7%94%A8%E8%80%8C%E8%A8%80%EF%BC%8C%E6%98%BE%E7%A4%BA%E9%94%99%E8%AF%AF%E7%9A%84%E9%87%91%E9%A2%9D%E4%B9%9F%E6%AF%94%E4%B8%8D%E5%91%88%E7%8E%B0%E4%BB%BB%E4%BD%95%E5%86%85%E5%AE%B9%E6%9B%B4%E7%B3%9F%E7%B3%95%E3%80%82)：
+
+> 我们对这一决定有过一些争论，但根据我们的经验，把一个错误的 UI 留在那比完全移除它要更糟糕。例如，在类似 Messenger 的产品中，把一个异常的 UI 展示给用户可能会导致用户将信息错发给别人。同样，对于支付类应用而言，显示错误的金额也比不呈现任何内容更糟糕。
+
+所以我们需要做出一些些改动，当**所有**工作单元执行完后，再一并将所有的 dom 的添加
+
+```ts
+export const workLoop = (deadline: TimeRemaining) => {
+  let shouldYeild = false;
+  while (!!nextUnitOfWork && !shouldYeild) {
+    nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
+    shouldYeild = deadline.timeRemaining() < 1;
+  }
+  // 等到nextUnitOfWork做完之后再一并提交到 DOM
+  if (!nextUnitOfWork && wipRoot) {
+    commitRoot();
+  }
+  window.requestIdleCallback(workLoop);
+};
+
+const commitRoot = () => {
+  commitWork(wipRoot?.child!);
+  wipRoot = null;
+};
+const commitWork = (fiber?: Fiber) => {
+  if (!fiber) return;
+  let domParentFiber = fiber.parent;
+  while (!domParentFiber?.dom) {
+    domParentFiber = domParentFiber?.parent;
+  }
+  const domParent = domParentFiber?.dom;
+  domParent?.appendChild(fiber.dom);
+  commitWork(fiber.child);
+  commitWork(fiber.sibling);
+};
+```
+
+## Step 6: Reconciliation
+
+之前处理的都是向 DOM 之中添加 elements，其实还有两种操作：`update`和`delete`，所以在 commit 结束之后，需要保存当前的 fiber tree (用`currentRoot`来保存)，等到下次 render 时与 wipRoot(work in progress)的 fiber 树进行比较，同时在 wipRoot 增加一个 alternate 来连接旧的 fiber 树。
+
+同时在每次 commit 的时候执行 deletions，在重新 render 时重置 deletions
+
+```ts
+const commitRoot = () => {
+  deletions?.forEach((d) => commitWork(d));
+  commitWork(wipRoot?.child!);
+  // 保存当前的tree
+  currentRoot = wipRoot;
+  wipRoot = null;
+};
+export const render = (element: VElement, container: HTMLElement) => {
+  wipRoot = {
+    dom: container,
+    props: {
+      children: [element],
+    },
+    alternate: currentRoot,
+  };
+  // 重置deletions
+  deletions = [];
+  nextUnitOfWork = wipRoot;
+};
+```
+
+对于`performUnitOfWork`，我们把对 fiber 的遍历放到 reconcile 中
+
+```ts
+const performUnitOfWork = (fiber: VElement) => {
+  if (!fiber.dom) {
+    fiber.dom = createDom(fiber);
+  }
+  const elements = fiber.props.children;
+  // 在这里操作fiber
+  reconcileChildren(fiber, elements);
+
+  if (fiber.child) return fiber.child;
+
+  let nextFiber = fiber;
+  // if sibling exists,return;else return parent
+  while (nextFiber) {
+    if (nextFiber.sibling) return nextFiber.sibling;
+    nextFiber = nextFiber.parent!;
+  }
+  return null;
+};
+
+const reconcileChildren = (fiber: Fiber, elements: VElement[]) => {
+  if (!fiber) return;
+  let index = 0;
+  // 获取到旧fiber
+  let oldFiber = fiber.alternate?.child;
+  let preSibling: VElement | null = null;
+
+  while (index < elements?.length || !!oldFiber) {
+    const element = elements[index];
+
+    const sameType = oldFiber && element && element.type === oldFiber.type;
+
+    let newFiber: VElement | null = null;
+    if (sameType) {
+      // update
+      newFiber = {
+        type: oldFiber!.type,
+        props: element.props,
+        // 使用之前的dom，只需要更新props
+        dom: oldFiber?.dom,
+        parent: fiber,
+        alternate: oldFiber,
+        // effectTag将在commit阶段使用
+        effectTag: "UPDATE",
+      };
+    } else if (!sameType && element) {
+      // add
+      newFiber = {
+        type: element.type,
+        props: element.props,
+        // 需要创建一个新的dom
+        dom: null,
+        parent: fiber,
+        alternate: null,
+        effectTag: "PLACEMENT",
+      };
+    } else {
+      // remove
+      oldFiber!.effectTag = "DELETION";
+      // 收集deletions，在commitRoot时统一移除
+      deletions!.push(oldFiber!);
+    }
+    if (oldFiber) {
+      oldFiber = oldFiber.sibling;
+    }
+    if (index === 0) {
+      fiber.child = newFiber;
+    } else {
+      preSibling!.sibling = newFiber;
+    }
+    preSibling = newFiber;
+    index++;
+  }
+};
+```
+
+然后，在 commit 阶段来处理之前加上的`effectTags`，其中的 UPDATE 即为更新当前 fiber 的 props，包括简单属性的更新(setProperty)以及以 on 开头的事件的更新(addEventListener)
+
+```ts
+const commitWork = (fiber?: Fiber) => {
+  if (!fiber) return;
+  let domParentFiber = fiber.parent;
+  while (!domParentFiber?.dom) {
+    domParentFiber = domParentFiber?.parent;
+  }
+  const domParent = domParentFiber?.dom;
+  if (fiber.effectTag === "PLACEMENT" && !!fiber.dom) {
+    // 如果是添加，就直接添加
+    domParent?.appendChild(fiber.dom);
+  } else if (fiber.effectTag === "UPDATE" && !!fiber.dom) {
+    // update fiber
+    updateDom(fiber.dom, fiber.alternate?.props!, fiber.props);
+  } else if (fiber.effectTag === "DELETION") {
+    let child = fiber;
+    while (!child?.dom) {
+      child = fiber.child!;
+    }
+    domParent?.removeChild(child.dom!);
+  }
+  // 继续commit child 和 sibling
+  commitWork(fiber.child);
+  commitWork(fiber.sibling);
+};
+
+const isNew = (prev: HTMLProps | {}, next: HTMLProps) => (key: string) =>
+  // @ts-ignore
+  prev[key] !== next[key];
+const isGone = (prev: HTMLProps | {}, next: HTMLProps) => (key: string) =>
+  !(key in next);
+const isEvent = (key: string) => key.startsWith("on");
+const isProperty = (key: string) => key !== "children" && !isEvent(key);
+
+export const updateDom = (
+  dom: HTMLElement | Text,
+  prevProps: HTMLProps | {},
+  nextProps: HTMLProps
+) => {
+  // Remove old properties
+  Object.keys(prevProps)
+    .filter(isProperty)
+    .filter(isGone(prevProps, nextProps))
+    .forEach((name) => {
+      // @ts-ignore
+      dom[name] = "";
+    });
+  // Set new or changed properties
+  Object.keys(nextProps)
+    .filter(isProperty)
+    .filter(isNew(prevProps, nextProps))
+    .forEach((name) => {
+      // @ts-ignore
+      dom[name] = nextProps[name];
+    });
+  //Remove old or changed event listeners
+  Object.keys(prevProps)
+    .filter(isEvent)
+    .filter((key) => !(key in nextProps) || isNew(prevProps, nextProps)(key))
+    .forEach((name) => {
+      const eventType = name.toLowerCase().substring(2);
+      // @ts-ignore
+      dom.removeEventListener(eventType, prevProps[name]);
+    });
+  // Add event listeners
+  Object.keys(nextProps)
+    .filter(isEvent)
+    .filter(isNew(prevProps, nextProps))
+    .forEach((name) => {
+      const eventType = name.toLowerCase().substring(2);
+      // @ts-ignore
+      dom.addEventListener(eventType, nextProps[name]);
+    });
+};
 ```
