@@ -124,7 +124,7 @@ const render = (element: VElement, container: HTMLElement) => {
 
 ## Step 3: Concurrent mode
 
-对于上一步实现的 render，实际上是有点问题的，就是在于上面的那个*递归*，只要开始了 render，那么直到它完成，整个 render 才会结束，如果 element tree 比较庞大，render 过程中可能会阻塞浏览器进程很长时间，就会影响浏览器更高优先级的事务处理（比如说，用户的输入和 ui 交互等等）
+对于上一步实现的 render，实际上是有点问题的，就是在于上面的那个*递归*，只要开始了 render，那么直到它完成，整个 render 才会结束，如果 element tree 比较庞大，render 过程中可能会阻塞浏览器进程很长时间，就会影响浏览器更高优先级的事务处理（比如用户的输入和 ui 交互等等）
 
 所以我们需要把这个大的任务切割为多个小的工作单元，这样的话，如果浏览器有更高优先级的事务处理，我们就可以中断 react 元素的渲染，这我们引入一个概念，称它为 [并发模式](https://zh-hans.reactjs.org/docs/concurrent-mode-intro.html#:~:text=%E8%AE%A9%E6%88%91%E4%BB%AC%E5%9B%9E%E9%A1%BE%E4%B8%80%E4%B8%8B%E4%B8%8A%E9%9D%A2%E7%9A%84%E4%B8%A4%E4%B8%AA%E4%BE%8B%E5%AD%90%E7%84%B6%E5%90%8E%E7%9C%8B%E4%B8%80%E4%B8%8B%20Concurrent%20%E6%A8%A1%E5%BC%8F%E6%98%AF%E5%A6%82%E4%BD%95%E5%B0%86%E5%AE%83%E4%BB%AC%E8%81%94%E5%90%88%E8%B5%B7%E6%9D%A5%E7%9A%84%E3%80%82%E5%9C%A8%20Concurrent%20%E6%A8%A1%E5%BC%8F%E4%B8%AD%EF%BC%8CReact%20%E5%8F%AF%E4%BB%A5%20%E5%90%8C%E6%97%B6,%E8%8A%82%E7%82%B9%E5%92%8C%E8%BF%90%E8%A1%8C%E7%BB%84%E4%BB%B6%E4%B8%AD%E7%9A%84%E4%BB%A3%E7%A0%81) ：
 
@@ -134,7 +134,7 @@ const render = (element: VElement, container: HTMLElement) => {
 
 ![concurrent mode](/images/react-1.png)
 
-我们可以用[requestIdleCallback](https://developer.mozilla.org/zh-CN/docs/Web/API/Window/requestIdleCallback)来实现此功能。React 目前不再使用`requestIdleCallback`，现在是使用的[scheduler package](https://pomb.us/build-your-own-react/)，不过从概念上来看这两个是一样的。
+我们可以用[requestIdleCallback](https://developer.mozilla.org/zh-CN/docs/Web/API/Window/requestIdleCallback)来实现此功能。React 目前不再使用`requestIdleCallback`，而是[scheduler package](https://pomb.us/build-your-own-react/)，不过从概念上来说这两个是一样的。
 
 ```js
 
@@ -144,7 +144,7 @@ function workLoop(deadline) {
  // 是否要暂停
   let shouldYield = false
   while (nextUnitOfWork && !shouldYield) {
-    // 执行 一个工作单元 并返回  下一个工作单元
+    // 执行 一个工作单元 并返回下一个工作单元
     nextUnitOfWork = performUnitOfWork(
       nextUnitOfWork
     )
@@ -215,14 +215,14 @@ const performUnitOfWork = (fiber)=> {
   if (!fiber.dom) {
     fiber.dom = createDom(fiber)
   }
-​  // 添加 dom 到 父元素上
+​  // 添加 dom 到父元素上
   if (fiber.parent) {
     fiber.parent.dom.appendChild(fiber.dom)
   }
 ​
   const elements = fiber.props.children
   let index = 0
-  // 保存 上一个 sibling fiber 结构
+  // 保存上一个 sibling fiber 结构
   let prevSibling = null
 ​
   while (index < elements.length) {
@@ -234,7 +234,7 @@ const performUnitOfWork = (fiber)=> {
       parent: fiber,
       dom: null,
     }
-​    // 第一个子元素 作为 child，其余的 子元素 作为 sibling
+​    // 第一个子元素 作为 child，其余的子元素都作为 sibling
     if (index === 0) {
       fiber.child = newFiber
     } else {
@@ -263,7 +263,7 @@ const performUnitOfWork = (fiber)=> {
 
 ## Step 5: Render and Commit
 
-目前虽然是实现了可中断的 render 了，但是还有个问题就在它们是每次直接把 element 添加到 document 上，如果在这个过程中浏览器暂时中断了渲染的过程，那么就会呈现出不完整的 UI，这是非常不好的，比如 react 官方文档对 `error boundary`的处理有这样的[评论](https://zh-hans.reactjs.org/docs/error-boundaries.html#:~:text=%E6%88%91%E4%BB%AC%E5%AF%B9%E8%BF%99%E4%B8%80%E5%86%B3%E5%AE%9A%E6%9C%89%E8%BF%87%E4%B8%80%E4%BA%9B%E4%BA%89%E8%AE%BA%EF%BC%8C%E4%BD%86%E6%A0%B9%E6%8D%AE%E6%88%91%E4%BB%AC%E7%9A%84%E7%BB%8F%E9%AA%8C%EF%BC%8C%E6%8A%8A%E4%B8%80%E4%B8%AA%E9%94%99%E8%AF%AF%E7%9A%84%20UI%20%E7%95%99%E5%9C%A8%E9%82%A3%E6%AF%94%E5%AE%8C%E5%85%A8%E7%A7%BB%E9%99%A4%E5%AE%83%E8%A6%81%E6%9B%B4%E7%B3%9F%E7%B3%95%E3%80%82%E4%BE%8B%E5%A6%82%EF%BC%8C%E5%9C%A8%E7%B1%BB%E4%BC%BC%20Messenger%20%E7%9A%84%E4%BA%A7%E5%93%81%E4%B8%AD%EF%BC%8C%E6%8A%8A%E4%B8%80%E4%B8%AA%E5%BC%82%E5%B8%B8%E7%9A%84%20UI%20%E5%B1%95%E7%A4%BA%E7%BB%99%E7%94%A8%E6%88%B7%E5%8F%AF%E8%83%BD%E4%BC%9A%E5%AF%BC%E8%87%B4%E7%94%A8%E6%88%B7%E5%B0%86%E4%BF%A1%E6%81%AF%E9%94%99%E5%8F%91%E7%BB%99%E5%88%AB%E4%BA%BA%E3%80%82%E5%90%8C%E6%A0%B7%EF%BC%8C%E5%AF%B9%E4%BA%8E%E6%94%AF%E4%BB%98%E7%B1%BB%E5%BA%94%E7%94%A8%E8%80%8C%E8%A8%80%EF%BC%8C%E6%98%BE%E7%A4%BA%E9%94%99%E8%AF%AF%E7%9A%84%E9%87%91%E9%A2%9D%E4%B9%9F%E6%AF%94%E4%B8%8D%E5%91%88%E7%8E%B0%E4%BB%BB%E4%BD%95%E5%86%85%E5%AE%B9%E6%9B%B4%E7%B3%9F%E7%B3%95%E3%80%82)：
+目前虽然是实现了可中断的 render 了，但是还有个问题就在它们是每次直接把 element 添加到 DOM 上，如果在这个过程中浏览器暂时中断了渲染的过程，那么就会呈现出不完整的 UI，这是非常不好的，在 react 官方文档中对 `error boundary`的处理不完整的 UI 有这样的[评论](https://zh-hans.reactjs.org/docs/error-boundaries.html#:~:text=%E6%88%91%E4%BB%AC%E5%AF%B9%E8%BF%99%E4%B8%80%E5%86%B3%E5%AE%9A%E6%9C%89%E8%BF%87%E4%B8%80%E4%BA%9B%E4%BA%89%E8%AE%BA%EF%BC%8C%E4%BD%86%E6%A0%B9%E6%8D%AE%E6%88%91%E4%BB%AC%E7%9A%84%E7%BB%8F%E9%AA%8C%EF%BC%8C%E6%8A%8A%E4%B8%80%E4%B8%AA%E9%94%99%E8%AF%AF%E7%9A%84%20UI%20%E7%95%99%E5%9C%A8%E9%82%A3%E6%AF%94%E5%AE%8C%E5%85%A8%E7%A7%BB%E9%99%A4%E5%AE%83%E8%A6%81%E6%9B%B4%E7%B3%9F%E7%B3%95%E3%80%82%E4%BE%8B%E5%A6%82%EF%BC%8C%E5%9C%A8%E7%B1%BB%E4%BC%BC%20Messenger%20%E7%9A%84%E4%BA%A7%E5%93%81%E4%B8%AD%EF%BC%8C%E6%8A%8A%E4%B8%80%E4%B8%AA%E5%BC%82%E5%B8%B8%E7%9A%84%20UI%20%E5%B1%95%E7%A4%BA%E7%BB%99%E7%94%A8%E6%88%B7%E5%8F%AF%E8%83%BD%E4%BC%9A%E5%AF%BC%E8%87%B4%E7%94%A8%E6%88%B7%E5%B0%86%E4%BF%A1%E6%81%AF%E9%94%99%E5%8F%91%E7%BB%99%E5%88%AB%E4%BA%BA%E3%80%82%E5%90%8C%E6%A0%B7%EF%BC%8C%E5%AF%B9%E4%BA%8E%E6%94%AF%E4%BB%98%E7%B1%BB%E5%BA%94%E7%94%A8%E8%80%8C%E8%A8%80%EF%BC%8C%E6%98%BE%E7%A4%BA%E9%94%99%E8%AF%AF%E7%9A%84%E9%87%91%E9%A2%9D%E4%B9%9F%E6%AF%94%E4%B8%8D%E5%91%88%E7%8E%B0%E4%BB%BB%E4%BD%95%E5%86%85%E5%AE%B9%E6%9B%B4%E7%B3%9F%E7%B3%95%E3%80%82)：
 
 > 我们对这一决定有过一些争论，但根据我们的经验，把一个错误的 UI 留在那比完全移除它要更糟糕。例如，在类似 Messenger 的产品中，把一个异常的 UI 展示给用户可能会导致用户将信息错发给别人。同样，对于支付类应用而言，显示错误的金额也比不呈现任何内容更糟糕。
 
@@ -302,9 +302,9 @@ const commitWork = (fiber?: Fiber) => {
 
 ## Step 6: Reconciliation
 
-之前处理的都是向 DOM 之中添加 elements，其实还有两种操作：`update`和`delete`，所以在 commit 结束之后，需要保存当前的 fiber tree (用`currentRoot`来保存)，等到下次 render 时与 wipRoot(work in progress)的 fiber 树进行比较，同时在 wipRoot 增加一个 alternate 来连接旧的 fiber 树。
+之前处理的都是向 DOM 之中添加 elements，其实还有两种操作：`update`和`delete`，所以在 commit 结束之后，需要保存当前的 fiber tree (用`currentRoot`来保存)，等到下次 render 时与 wipRoot(work in progress)的 fiber 树进行比较，同时在 wipRoot 中增加一个 alternate 属性来连接旧的 fiber 树。
 
-同时在每次 commit 的时候执行 deletions，在重新 render 时重置 deletions
+同时在每次 commit 的时候执行加入 deletions 列表，然后在重新 render 时重置 deletions
 
 ```ts
 const commitRoot = () => {
@@ -495,7 +495,7 @@ const container = document.getElementById("root");
 render(element, container);
 ```
 
-它变成 js 之后是这样的：
+再转译之后变成 js 将会是这样:
 
 ```ts
 function App(props) {
@@ -506,7 +506,7 @@ const element = createElement(App, {
 });
 ```
 
-所以在 reconcile 之前，应该检查 fiber 是否是 Function,如果是 fiber 的 children 应该调用 `fiber.type`:
+所以在执行 reconcile 之前，应该检查一下 fiber 的 type 是否是 Function,如果的话 fiber 的 children 应该通过调用 `fiber.type`来获得:
 
 ```ts
 let wipFiber: VElement;
@@ -555,3 +555,22 @@ export const useState = <T>(initial: T): [T, Function] => {
   return [hook.state, setState];
 };
 ```
+
+## 小结
+
+这个就是本文构建的 react，这里是[源码](https://github.com/debugtheworldbot/redesigned-react)和[在线 demo](https://debugtheworldbot.github.io/redesigned-react/)
+
+为了便于理解 react 是如何工作的，这份代码用了和 react 源码里面一模一样的变量名和函数名，like:
+
+- workLoop
+- performUnitOfWork
+- updateFunctionComponent
+
+但是在有些地方和 react 本身的实现会有一些出入：
+
+- 在 render 和 commit 阶段，我们都会遍历整个 fiber tree，而 react 会选择性地跳过一些并没有发生变化的子树
+- 每一次我们构建一个新的`work in progress`tree 时，都会为每一个 fiber 创建一个新对象,而 react 会回收之前 tree 里面的一些 fiber
+- 在 render 阶段触发更新时，我们会丢弃掉整个`work in progress` tree，然后从 root 重新开始，而 react 会给每个更新打一个有过期时间的 tag，并且依赖它来确定哪一个更新具有更高的优先级
+- ...
+
+总的代码量也就 200 多行，但是对于了解 react 大体上是如何工作的还是有很大帮助的。
