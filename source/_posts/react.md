@@ -134,7 +134,7 @@ const render = (element: VElement, container: HTMLElement) => {
 
 ![concurrent mode](/images/react-1.png)
 
-我们可以用[requestIdleCallback](https://developer.mozilla.org/zh-CN/docs/Web/API/Window/requestIdleCallback)来实现此功能。React 目前不再使用`requestIdleCallback`，而是[scheduler package](https://pomb.us/build-your-own-react/)，不过从概念上来说这两个是一样的。
+我们可以用[requestIdleCallback](https://developer.mozilla.org/zh-CN/docs/Web/API/Window/requestIdleCallback)来实现此功能。React 目前不再使用`requestIdleCallback`，而是[scheduler package](https://github.com/facebook/react/tree/main/packages/scheduler/)，不过从概念上来说这两个是一样的。
 
 ```js
 
